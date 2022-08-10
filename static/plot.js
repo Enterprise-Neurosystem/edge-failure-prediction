@@ -1,70 +1,75 @@
-var graph = document.getElementById("graph");
-let data = [{ // Data points
+var graph = document.getElementById("predGraph");
+let data = [
+    { // 2 Trace for alarm
+        x: [],
+        y: [],
+        yaxis: 'y2',   // Plotly naming convention. 'y2' in the data = 'yaxis2' in layout
+        type: 'bar',
+        width: 1,
+        marker: {color: 'red'},
+        xaxis:{type: 'date'},
+        opacity: 0.4
+    },
+    { // 0 Trace for Data points for sensor
         x: [],
         y: [],
         mode: 'markers',
-        marker: {color: 'black', size: 3},
+        marker: {color: 'gray', size: 3},
         xaxis:{type: 'date'}
     },
-    {  // Endpoints of regression line
+    { // 1 Trace for Data points for sensor
         x: [],
         y: [],
-        mode: 'lines',
-        marker: {color: 'blue', size:1},
-        line: {width: 1},
-        opacity: 0.3
-    },
-    {   // Trace for calculated points
-           x:[],
-           y:[],
-           yaxis: 'y2',
-
-           // plotcolor: ['green'],
-           mode: 'lines',
-           marker: {color: 'green'},
-           line: {width: 2},
-           opacity: 0.6
+        mode: 'markers',
+        marker: {color: 'gray', size: 3},
+        xaxis:{type: 'date'}
     }];
+
+
 // This array of empty traces is used whenever we need to restart a plot after it has been stopped.
 // Since the array is empty, the restarted plot will start with no data.
-let initData = [{ // Data points
+let initData = [
+    { // Trace 0 for alarm
+        x: [],
+        y: [],
+        yaxis: 'y2',  // Plotly naming convention. 'y2' in the data = 'yaxis2' in layout
+        type: 'bar',
+        width: 1,
+        marker: {color: 'red'},
+        xaxis:{type: 'date'},
+        opacity: 0.4
+    },
+    { // Trace1 for Data points for sensor
         x: [],
         y: [],
         mode: 'markers',
-        marker: {color: 'black', size: 3},
+        marker: {color: 'gray', size: 3},
         xaxis:{type: 'date'}
     },
-    {  // Endpoints of regression line
+    { // Trace2 for Data points for sensor
         x: [],
         y: [],
-        mode: 'lines',
-        marker: {color: 'blue', size:1},
-        line: {width: 1},
-        opacity: 0.3
-    },
-    {   // Trace for calculated points
-           x:[],
-           y:[],
-           yaxis: 'y2',
-
-           plotcolor: ['green'],
-           mode: 'lines',
-           marker: {color: 'green'},
-           line: {width: 2},
-           opacity: 0.6
+        mode: 'markers',
+        marker: {color: 'gray', size: 3},
+        xaxis:{type: 'date'}
     }];
     let layout = {
-        margin: {t:100},
+        title: {text: 'Failure Prediction',
+                font: {size: 20},
+                xanchor: 'center',
+                yanchor: 'top'},
+        margin: {t:50},
         xaxis: {type: 'date'},
-        yaxis: {range: [0, 1],
-                title: 'Pump Pressure',
+        yaxis: {range: [-1, 1],
+                title: 'Scaled Sensors',
                 side: 'left'},
-        yaxis2: {title: 'Percent Diff From Regression Line',
-                 titlefont: {color: 'green'},
+        yaxis2: {title: 'Failure Prediction',
+                 titlefont: {color: 'red'},
                  overlaying: 'y',
                  side: 'right',
-                 range: [-100, 100],
-                 zerolinecolor: 'green'
+                 range: [0, 1],
+                 zerolinecolor: 'red',
+                tickfont: {color: 'red'}
         },
         showlegend: false
 
@@ -79,68 +84,41 @@ function initPlot(){
     data[1].y = Array.from(initData[1].y);
     data[2].x = Array.from(initData[2].x);
     data[2].y = Array.from(initData[2].y);
-    Plotly.newPlot('graph', data, layout);
+
+    Plotly.newPlot('predGraph', data, layout);
 }
 
 var msgCounter = 0; // Another way of shifting. Not used in this code.
 
 function updatePlot(jsonData){
-    console.log("plot.js updatePlot()  " + jsonData);
+   // console.log("plot.js updatePlot()  " + jsonData);
     //console.log("msgCounter: " + msgCounter++);
-    let max = 100;
+    let max = 720;
     let jsonObj = JSON.parse(jsonData);  // json obj is in form:  ['timestamp', 'sensorVal']
-    // Json is in the form:
-     // {'plotpoint': [timestamp, sensor_val],
-     //    'regress': {'xs': [x1, x2],
-     //                'ys': [y1, y2]
-     //                },
-     //    'calc': {'x1': x_old_p,
-     //             'x2': x_new_p,
-     //             'y_diff1': y_percent_diff_old,
-     //             'y_diff2': y_percent_diff,
-     //             'plot_color': plot_color,
-      //            'row_counter': row_counter
-      //            }
-     //  }
-
-    let timestamp = jsonObj.plotpoint[0];
-    let sensorValue = jsonObj.plotpoint[1];
-
-    let regress = jsonObj.regress;
-    let x1 = regress.xs[0];
-    let x2 = regress.xs[1];
-    let y1 = regress.ys[0];
-    let y2 = regress.ys[1];
-    let diffNode = jsonObj.calc;
-    let diff_x1 = diffNode.x1;
-    let diff_x2 = diffNode.x2;
-    let diff_y1 = diffNode.y_diff1;
-    let diff_y2 = diffNode.y_diff2;
-    // Next two values would be used to change the plot color in real time, but Plotly.js does not support
-    let plot_color = diffNode.plot_color;
-    let row_counter = diffNode.row_counter;
-
-    // Add new data point as well as calculated data for regression line start and end points as well as the
-    // y difference plot.  Note there are three traces.  The first two traces use the same layout named yaxis.
+    // For reference this is how the dictionary is created on the server side.
+ //           plot_dict = {
+//            'timestamp': one_row_df.index[0],
+//            'pc1': one_row_df['pc1'].values[0],
+//            'pc2': one_row_df['pc2'].values[0],
+//            'alarm': alarm_value
+//        }
+    // Unpack json
+    let timestamp = jsonObj.timestamp;
+    let pc1 = jsonObj.pc1;
+    let pc2 = jsonObj.pc2;
+    let alarm =    jsonObj.alarm;
+    // Note there are three traces.  The first two traces use the same layout named yaxis.
+    // The first two traces plot the values of the two chosen pc's
     // The third trace uses the layout named yaxis2.  This naming convention follows that of plotly.js
-    Plotly.extendTraces('graph', {
-        // NOTE:  The below 2 commented lines would be used if the dynamic line coloring were supported by plotly.js
-        //x: [[timestamp], [x1, x2], [diff_x1, diff_x2]],
-        //y: [[sensorValue], [y1,y2], [diff_y1, diff_y2]]
-        x: [[timestamp], [x1, x2], [diff_x2]],
-        y: [[sensorValue], [y1,y2], [diff_y2]]
+    // The third trace plots vertical red lines showing the predictions
+    Plotly.extendTraces('predGraph', {
+
+        //x: [[timestamp], [timestamp], [timestamp, timestamp] ],
+        //y: [[pc1], [pc2], [0, alarm]]
+        x: [[timestamp], [timestamp], [timestamp]],
+        y: [[alarm], [pc1], [pc2]]
 
     }, [0, 1, 2], max);  // The array denotes to plot all three traces(0 based).  Keep only last max data points
 
-
-    // NOTE:  This code below was an attempt to dynamically change the color of the Percent Diff plot to red whenever
-    // the plot went beyond the acceptable range.  Plotly.js does not support such a feature.
-
-    //if(plot_color != null){
-    //    let updateStr = 'marker.color[' + row_counter + ']';
-        //Plotly.restyle('graph', editObj, [2]);
-    //    Plotly.react(graph, {[updateStr]: plot_color}, null, [2]);
-
-    //}
 
 }
