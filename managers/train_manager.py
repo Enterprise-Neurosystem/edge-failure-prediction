@@ -28,8 +28,8 @@ class TrainManager:
         # TODO:  make callbacks configurable
         callback = LearningRateScheduler(TrainManager.scheduler)
         history = TrainManager.model.fit(X, y, epochs, batch_size, callbacks=[callback])
-        TrainManager.model.save('static/trained_model')
-        #joblib.dump(TrainManager.model, 'static/trained_model')
+        TrainManager.model.save('tests/trained_model')
+        #joblib.dump(TrainManager.model, 'tests/trained_model')
 
         return history
 
@@ -38,5 +38,5 @@ class TrainManager:
         return epochs * batch_size
 
    # def save_model(self):
-        # joblib.dump(self.model, 'static/trained_model.gz')
-   #     tf.keras.models.save_model(self.model, 'static/trained_model.gz')
+        # joblib.dump(self.model, 'tests/trained_model.gz')
+   #     tf.keras.models.save_model(self.model, 'tests/trained_model.gz')

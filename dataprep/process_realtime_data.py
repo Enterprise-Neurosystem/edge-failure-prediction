@@ -60,7 +60,7 @@ class ProcessRealtimeData:
 
     def load_model(self, model_filename):
         #return joblib.load(model_filename)
-        return LSTMModel.load_model('static/trained_model')
+        return LSTMModel.load_model('tests/trained_model')
 
     def process_points(self):
         """Process one point from the prediction data

@@ -37,8 +37,8 @@ async function doTwoFilesExist(fileName1, fileName2){
 // When Data Prep tab is clicked, first determined if model has already been trained and scaler exists.
 // If both exist, enable Train Tab, Test Tab and Prediction Tab
 function onloadDataCheck(){
-    let fileName1 = 'static/trained_model/saved_model.pb';
-    let fileName2 = 'static/training_scaler.gz'
+    let fileName1 = 'tests/trained_model/saved_model.pb';
+    let fileName2 = 'tests/training_scaler.gz'
     let dataPresent = doTwoFilesExist(fileName1, fileName2); //This is a Promise that was returned from the
                                                              //async function, doTwoFilesExist()
 

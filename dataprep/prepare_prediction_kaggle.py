@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 # Read data, set 'timestamp' values as index
-df = pd.read_csv('../static/sensor.csv', index_col='timestamp', parse_dates=True)
+df = pd.read_csv('../tests/sensor.csv', index_col='timestamp', parse_dates=True)
 
 
 # Column 'machine_status' has word values.
@@ -24,4 +24,4 @@ failure_times = df[df['machine_status'] == 1].index
 # Write the data slices to csv files
 for i, failure_time in enumerate(failure_times):
     df.loc[(failure_time - pd.Timedelta(seconds=60*60*12)) : failure_time, :].\
-        to_csv('../static/kaggle_prediction_data/prediction_slice'+str(i)+'.csv')
+        to_csv('../tests/kaggle_prediction_data/prediction_slice'+str(i)+'.csv')
