@@ -1,5 +1,5 @@
 from flask import Flask, render_template, Response, request, jsonify
-
+import os
 from dataprep.data_preparation import DataPreparation
 from graphs.graph_manager import GraphManager
 from managers.train_manager import TrainManager
@@ -17,9 +17,13 @@ application = app
 @app.route('/')
 def main():
     """
+    First create a cache directory if not exist.
     Just show the main.html without any data
     :return:
     """
+    path = 'static/cache/'
+    if not os.path.exists(path):
+        os.makedirs(path)
     return render_template('main.html')
 
 @app.route('/initData', methods=['POST'])
@@ -88,12 +92,12 @@ def test_model():
 
 @app.route('/runPredict')
 def run_predict():
-    file_name = 'tests/prediction_slice1.csv'
-    scaler_filename = 'tests/training_scaler.gz'
-    pca_filename = 'tests/pca.gz'
-    means_filename = 'tests/mean.gz'
-    bad_cols_filename = 'tests/bad_cols.gz'
-    model_filename = 'tests/trained_model/saved_model.pb'
+    file_name = 'static/cache/prediction_slice1.csv'
+    scaler_filename = 'static/cache/training_scaler.gz'
+    pca_filename = 'static/cache/pca.gz'
+    means_filename = 'static/cache/mean.gz'
+    bad_cols_filename = 'static/cache/bad_cols.gz'
+    model_filename = 'static/cache/trained_model/saved_model.pb'
     predict_window_size = 20
     rtd = ProcessRealtimeData(predict_window_size, scaler_filename, pca_filename,
                               means_filename, bad_cols_filename, model_filename, csv_filename=file_name)
