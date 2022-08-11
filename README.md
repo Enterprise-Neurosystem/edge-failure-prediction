@@ -19,6 +19,7 @@ Run app locally
 ```
 # devel
 python3 wsgi.py
+
 # gunicorn
 gunicorn wsgi:application -b 0.0.0.0:8080
 ```
