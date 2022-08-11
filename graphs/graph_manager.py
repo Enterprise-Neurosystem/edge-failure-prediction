@@ -15,6 +15,7 @@ class GraphManager:
     def plot_history(history):
         fig_height = 4
         fig_width = 10
+        plt.switch_backend('Agg')
         plt.figure(figsize=(fig_width, fig_height))
         plt.title('Cross-Entropy Loss and Binary-Accuracy')
         plt.plot(history.history['loss'], label='Loss')
