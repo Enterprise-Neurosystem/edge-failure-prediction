@@ -46,7 +46,7 @@ class DataPreparation:
 
     def __init__(self):
         DataPreparation.do_automated_data_prep()
-        joblib.dump(DataPreparation.bad_cols, 'tests/bad_cols.gz')
+        joblib.dump(DataPreparation.bad_cols, 'static/cache/bad_cols.gz')
 
     @staticmethod
     def get_df():
@@ -493,12 +493,12 @@ class DataPreparation:
 
         # Calculate mean of each column in the training df.  Then save the mean df.
         mean_df = df_train.mean()
-        joblib.dump(mean_df, 'tests/mean.gz')
+        joblib.dump(mean_df, 'static/cache/mean.gz')
 
         #  Get scaler that has been fit to training data
         DataPreparation.min_max_scaler = DataPreparation.get_scaler(df_train)
         # Save scaler for use in prediction
-        joblib.dump(DataPreparation.min_max_scaler, 'tests/training_scaler.gz')
+        joblib.dump(DataPreparation.min_max_scaler, 'static/cache/training_scaler.gz')
 
         # Scale (transform) using the previously formed min_max_scaler.  Results are ndarray
         # These scaled arrays are for all the sensors since PCA needs scaled data
@@ -514,7 +514,7 @@ class DataPreparation:
         # Get the number of PC that are needed to make the sum of explained_variance_ratio reach 0.95
         num_features_to_include = pca_fit.n_components_
         # Save PCA for use on prediction data
-        joblib.dump(DataPreparation.pca, 'tests/pca.gz')
+        joblib.dump(DataPreparation.pca, 'static/cache/pca.gz')
         # Get Dataframe of ranked features determined by PCA
         DataPreparation.ranked_features = DataPreparation.get_ranked_features(DataPreparation.pca, df_train.columns)
 
