@@ -7,6 +7,8 @@ from plotly.subplots import make_subplots
 from io import BytesIO
 import base64
 import pandas as pd
+
+
 class GraphManager:
     def __init__(self):
         pass
@@ -15,11 +17,11 @@ class GraphManager:
     def plot_history(history):
         fig_height = 4
         fig_width = 10
-        plt.switch_backend('Agg')
+        plt.switch_backend("Agg")
         plt.figure(figsize=(fig_width, fig_height))
-        plt.title('Cross-Entropy Loss and Binary-Accuracy')
-        plt.plot(history.history['loss'], label='Loss')
-        plt.plot(history.history['binary_accuracy'], label='Accuracy')
+        plt.title("Cross-Entropy Loss and Binary-Accuracy")
+        plt.plot(history.history["loss"], label="Loss")
+        plt.plot(history.history["binary_accuracy"], label="Accuracy")
 
         plt.legend()
         plt.xlabel("Epoch")
@@ -29,8 +31,8 @@ class GraphManager:
         buffer.seek(0)
         buff_contents = buffer.getvalue()
         buff_encoded = base64.b64encode(buff_contents)
-        buff_str = buff_encoded.decode('ascii')
-        encoded = base64.b64encode(buffer.getvalue()).decode('ascii')
+        buff_str = buff_encoded.decode("ascii")
+        encoded = base64.b64encode(buffer.getvalue()).decode("ascii")
         plt.close()
         return encoded
 
@@ -50,41 +52,49 @@ class GraphManager:
 
         traces = []
         for col in cols:
-            traces.append(go.Scatter(x=df_test_window[col].index,
-                                     y=df_test_window[col].values,
-                                     mode='lines',
-                                     line_color='#dde3ed'))
+            traces.append(
+                go.Scatter(
+                    x=df_test_window[col].index,
+                    y=df_test_window[col].values,
+                    mode="lines",
+                    line_color="#dde3ed",
+                )
+            )
 
         for alarm_time in alarm_times:
-            traces.append(go.Scatter(x=[alarm_time, alarm_time],
-                                     y=[0, 0.5],
-                                     mode='lines',
-                                     line_color='#e04031',
-                                     marker_line_width=5
-                                     ))
-        layout = Layout(width=750,
-                        height=250,
-                        showlegend=False,
-                        title={'text': 'Failure Prediction',
-                               'y': 0.99,
-                               'x': 0.5,
-                               'xanchor': 'center',
-                               'yanchor': 'top'
-                               },
-                        yaxis={'visible': False},
-                        margin=Margin(l=5, r=5, b=20,t=40, pad=0))
-        div_buffer = plotly.offline.plot({"data": traces, "layout": layout},
-                                         include_plotlyjs='cdn',
-                                         output_type='div',
-                                         config=dict(displayModeBar=False))
+            traces.append(
+                go.Scatter(
+                    x=[alarm_time, alarm_time],
+                    y=[0, 0.5],
+                    mode="lines",
+                    line_color="#e04031",
+                    marker_line_width=5,
+                )
+            )
+        layout = Layout(
+            width=750,
+            height=250,
+            showlegend=False,
+            title={
+                "text": "Failure Prediction",
+                "y": 0.99,
+                "x": 0.5,
+                "xanchor": "center",
+                "yanchor": "top",
+            },
+            yaxis={"visible": False},
+            margin=Margin(l=5, r=5, b=20, t=40, pad=0),
+        )
+        div_buffer = plotly.offline.plot(
+            {"data": traces, "layout": layout},
+            include_plotlyjs="cdn",
+            output_type="div",
+            config=dict(displayModeBar=False),
+        )
 
         return div_buffer
 
-
-
-
-
     @staticmethod
     def df_plot_failure(df_prediction, feature_names):
-        df_prediction[feature_names].plot(c='black', figsize=(10,2))
+        df_prediction[feature_names].plot(c="black", figsize=(10, 2))
         plt.show()

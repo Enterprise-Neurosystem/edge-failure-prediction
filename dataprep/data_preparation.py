@@ -1,4 +1,3 @@
-
 import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
@@ -16,6 +15,7 @@ class DataPreparation:
     This class holds in class variables all the prepared training and testing data.  In addition there is a method called
     make_predict_data() that transforms the prepared data into a form that is recognized by the LSTM model
     """
+
     failure_times = None
     pca = None
     # 3 DataFrames of scaled and PCA data
@@ -38,7 +38,7 @@ class DataPreparation:
     original_null_list = None
     ranked_features = None
     num_features_to_include = None
-    bad_cols = ['Unnamed: 0', 'sensor_00', 'sensor_15', 'sensor_50', 'sensor_51']
+    bad_cols = ["Unnamed: 0", "sensor_00", "sensor_15", "sensor_50", "sensor_51"]
     job_size = 0
     progress_counter = 0
     min_max_scaler = None
@@ -46,7 +46,7 @@ class DataPreparation:
 
     def __init__(self):
         DataPreparation.do_automated_data_prep()
-        joblib.dump(DataPreparation.bad_cols, 'tests/bad_cols.gz')
+        joblib.dump(DataPreparation.bad_cols, "tests/bad_cols.gz")
 
     @staticmethod
     def get_df():
@@ -104,11 +104,16 @@ class DataPreparation:
         :type: Pandas DataFrame
         :return: none
         """
-        status_values = [(df['machine_status'] == 'NORMAL'), (df['machine_status'] == 'BROKEN'),
-                         (df['machine_status'] == 'RECOVERING')]
+        status_values = [
+            (df["machine_status"] == "NORMAL"),
+            (df["machine_status"] == "BROKEN"),
+            (df["machine_status"] == "RECOVERING"),
+        ]
         numeric_status_values = [0, 1, 0.5]
 
-        df['machine_status'] = np.select(status_values, numeric_status_values, default=0)
+        df["machine_status"] = np.select(
+            status_values, numeric_status_values, default=0
+        )
 
     @staticmethod
     def add_target_col(df, failure_times, start_offset, end_offset):
@@ -126,14 +131,17 @@ class DataPreparation:
 
         :return: none
         """
-        df['alarm'] = df['machine_status']
+        df["alarm"] = df["machine_status"]
         for i, failure_time in enumerate(failure_times):
             start_predic_time = failure_time - pd.Timedelta(
-                seconds=60 * start_offset)  # mins before the failure time
+                seconds=60 * start_offset
+            )  # mins before the failure time
             stop_predic_time = failure_time - pd.Timedelta(
-                seconds=60 * end_offset)  # mins before the failure time
-            df.loc[start_predic_time:stop_predic_time,
-            'alarm'] = 2  # can not use 1, because 1 indicates the machine failure time
+                seconds=60 * end_offset
+            )  # mins before the failure time
+            df.loc[
+                start_predic_time:stop_predic_time, "alarm"
+            ] = 2  # can not use 1, because 1 indicates the machine failure time
 
     @staticmethod
     def get_failure_times(df):
@@ -143,13 +151,13 @@ class DataPreparation:
         :return: Failure times
         :type: DatetimeIndex
         """
-        return df[df['machine_status'] == 1].index
+        return df[df["machine_status"] == 1].index
 
-    '''
+    """
       - the data before and two hours past the first failure is used as validation dataset
       - the data two hours after the first failure and two hours after the second failure is used as test dataset
       - the data two hours after the second failure is used as training dataset
-      '''
+      """
 
     @staticmethod
     def separate_data(df, failure_times):
@@ -162,10 +170,14 @@ class DataPreparation:
         :return: DataFrames for training, validation and testing
         :type: tuple of DataFrames
         """
-        df_val = df.loc[:(failure_times[0] + pd.Timedelta(seconds=60 * 120)), :]
-        df_test = df.loc[(failure_times[0] + pd.Timedelta(seconds=60 * 120)):(
-                failure_times[1] + pd.Timedelta(seconds=60 * 120)), :]
-        df_train = df.loc[failure_times[1] + pd.Timedelta(seconds=60 * 120):, :]
+        df_val = df.loc[: (failure_times[0] + pd.Timedelta(seconds=60 * 120)), :]
+        df_test = df.loc[
+            (failure_times[0] + pd.Timedelta(seconds=60 * 120)) : (
+                failure_times[1] + pd.Timedelta(seconds=60 * 120)
+            ),
+            :,
+        ]
+        df_train = df.loc[failure_times[1] + pd.Timedelta(seconds=60 * 120) :, :]
 
         return df_train, df_val, df_test
 
@@ -231,15 +243,18 @@ class DataPreparation:
         :return: DataFrame of ranked features
         :type: Pandas DataFrame
         """
-        feature_names = ['pc' + str(i + 1) for i in range(20)]
+        feature_names = ["pc" + str(i + 1) for i in range(20)]
 
         num_components = fit_pca.n_components_
 
         # bundle ranked important feature names with variance ratio
-        name_dict = {feature_names[i]: fit_pca.explained_variance_ratio_[i] for i in range(num_components)}
+        name_dict = {
+            feature_names[i]: fit_pca.explained_variance_ratio_[i]
+            for i in range(num_components)
+        }
 
         df_ranked_features = pd.DataFrame(name_dict.items())
-        df_ranked_features.columns = ['Ranked Components', 'Variance Ratio']
+        df_ranked_features.columns = ["Ranked Components", "Variance Ratio"]
         return df_ranked_features
 
     @staticmethod
@@ -264,13 +279,13 @@ class DataPreparation:
 
         data_transformed = pca.transform(scaled_data)  # ndarray
         df_transformed = pd.DataFrame(data_transformed)
-        pcs = ['pc' + str(i + 1) for i in range(pca.n_components_)]
+        pcs = ["pc" + str(i + 1) for i in range(pca.n_components_)]
         df_transformed.columns = pcs
 
         df_transformed.index = df_data.index
         df_smaller = df_transformed[pcs[:num_features_to_include]]
-        df_smaller['machine_status'] = df_data['machine_status'].values
-        df_smaller['alarm'] = df_data['alarm'].values
+        df_smaller["machine_status"] = df_data["machine_status"].values
+        df_smaller["alarm"] = df_data["alarm"].values
 
         return df_smaller
 
@@ -290,8 +305,15 @@ class DataPreparation:
     """
 
     @staticmethod
-    def timeseries_before_failure(df, failure_times, feature_names,
-                                  timewindow_dimensions, window_len, stride, data_type):
+    def timeseries_before_failure(
+        df,
+        failure_times,
+        feature_names,
+        timewindow_dimensions,
+        window_len,
+        stride,
+        data_type,
+    ):
         """Generate data samples that have a shape that is compatible with the LSTM layers
         Generate data samples using the time windows ahead of each machine failure time;
         Transform original df from a 2D array [samples, features] to a 3D array [samples, timesteps, features*window_len]
@@ -317,8 +339,9 @@ class DataPreparation:
 
         if data_type is not DataTypeEnum.TRAIN:
             stride = 1
-        X = np.empty((1, 1, window_len * len(feature_names)),
-                     float)  # [samples, timesteps, features].  Samples will be appended below
+        X = np.empty(
+            (1, 1, window_len * len(feature_names)), float
+        )  # [samples, timesteps, features].  Samples will be appended below
         Y = np.empty((1), float)
 
         # For each failure_time, generate two arrays of data. First array starts well (timewindow_for_use[0]) before failure time
@@ -326,22 +349,34 @@ class DataPreparation:
         # Second time array starts where first array ends(timewindow_for_use[2] and ends close to the failure (timewindow_for_use[3])
         for dummy, failure_time in enumerate(failure_times):
             windows_start = failure_time - pd.Timedelta(
-                seconds=60 * timewindow_dimensions[0])  # mins before the failure time
+                seconds=60 * timewindow_dimensions[0]
+            )  # mins before the failure time
             windows_end = failure_time - pd.Timedelta(
-                seconds=60 * timewindow_dimensions[1])  # mins before the failure time
+                seconds=60 * timewindow_dimensions[1]
+            )  # mins before the failure time
 
             # Feature data
-            df_prefailure_single_window_feature = df.loc[windows_start:windows_end, feature_names]
+            df_prefailure_single_window_feature = df.loc[
+                windows_start:windows_end, feature_names
+            ]
             # Label data
-            df_prefailure_single_window_target = df.loc[windows_start:windows_end, 'alarm']
+            df_prefailure_single_window_target = df.loc[
+                windows_start:windows_end, "alarm"
+            ]
 
             # Convert feature df and label df to lists
             data_aslist = df_prefailure_single_window_feature.to_numpy().tolist()
             targets_aslist = df_prefailure_single_window_target.tolist()
 
-            data_gen1 = TimeseriesGenerator(data_aslist, targets_aslist, window_len,
-                                            stride=stride,
-                                            sampling_rate=1, batch_size=1, shuffle=(data_type == DataTypeEnum.TRAIN))
+            data_gen1 = TimeseriesGenerator(
+                data_aslist,
+                targets_aslist,
+                window_len,
+                stride=stride,
+                sampling_rate=1,
+                batch_size=1,
+                shuffle=(data_type == DataTypeEnum.TRAIN),
+            )
             len_gen1 = len(data_gen1)
 
             print("len_gen1: {}   Train boolean: {}".format(len_gen1, data_type))
@@ -351,28 +386,44 @@ class DataPreparation:
                 x = np.transpose(x).flatten()
                 x = x.reshape((1, 1, len(x)))
                 X = np.append(X, x, axis=0)
-                Y = np.append(Y, y / 2,
-                              axis=0)  # alarm windows are marked as 2, however, for the model,  use 1 becasue of the sigmoid function.
+                Y = np.append(
+                    Y, y / 2, axis=0
+                )  # alarm windows are marked as 2, however, for the model,  use 1 becasue of the sigmoid function.
                 DataPreparation.progress_counter += 1
-                yield "event: inprogress\ndata: " + str(DataPreparation.progress_counter) + "\n\n"
+                yield "event: inprogress\ndata: " + str(
+                    DataPreparation.progress_counter
+                ) + "\n\n"
             if data_type == DataTypeEnum.TRAIN:
                 # for alarm window, num stride=1
                 windows_start = failure_time - pd.Timedelta(
-                    seconds=60 * timewindow_dimensions[2])  # mins before the failure time
+                    seconds=60 * timewindow_dimensions[2]
+                )  # mins before the failure time
                 windows_end = failure_time - pd.Timedelta(
-                    seconds=60 * timewindow_dimensions[3])  # mins before the failure time
+                    seconds=60 * timewindow_dimensions[3]
+                )  # mins before the failure time
 
                 time_delt_min = windows_end - windows_start
 
-                df_prefailure_single_window_feature = df.loc[windows_start:windows_end, feature_names]
-                df_prefailure_single_window_target = df.loc[windows_start:windows_end, 'alarm']
+                df_prefailure_single_window_feature = df.loc[
+                    windows_start:windows_end, feature_names
+                ]
+                df_prefailure_single_window_target = df.loc[
+                    windows_start:windows_end, "alarm"
+                ]
 
                 # Convert feature data into a list of groups of 4 (len(feature_cols))
                 data = df_prefailure_single_window_feature.to_numpy().tolist()
                 targets = df_prefailure_single_window_target.tolist()
 
-                data_gen2 = TimeseriesGenerator(data, targets, window_len, stride=1,
-                                                sampling_rate=1, batch_size=1, shuffle=True)
+                data_gen2 = TimeseriesGenerator(
+                    data,
+                    targets,
+                    window_len,
+                    stride=1,
+                    sampling_rate=1,
+                    batch_size=1,
+                    shuffle=True,
+                )
                 len_gen2 = len(data_gen2)
 
                 print("len_gen2: {}    Train boolean: {}".format(len_gen2, data_type))
@@ -381,15 +432,22 @@ class DataPreparation:
                     x = np.transpose(x).flatten()
                     x = x.reshape((1, 1, len(x)))
                     X = np.append(X, x, axis=0)
-                    Y = np.append(Y, y / 2,
-                                  axis=0)  # alarm windows are marked as 2, however, for the model,  use 1 becasue of the sigmoid function.
+                    Y = np.append(
+                        Y, y / 2, axis=0
+                    )  # alarm windows are marked as 2, however, for the model,  use 1 becasue of the sigmoid function.
                     DataPreparation.progress_counter += 1
-                    yield "event: inprogress\ndata: " + str(DataPreparation.progress_counter) + "\n\n"
+                    yield "event: inprogress\ndata: " + str(
+                        DataPreparation.progress_counter
+                    ) + "\n\n"
         # remove samples where y is neither 0 nor 1
         id_keep = [i for i, y in enumerate(Y) if (y == 1) | (y == 0)]
         y_data = Y[id_keep]
         X_data = X[id_keep][:, :]
-        print("Actual counter: {}    Train boolean: {}".format(DataPreparation.progress_counter, data_type))
+        print(
+            "Actual counter: {}    Train boolean: {}".format(
+                DataPreparation.progress_counter, data_type
+            )
+        )
         if data_type == DataTypeEnum.TRAIN:
             DataPreparation.X_train = X_data
             DataPreparation.y_train = y_data
@@ -401,8 +459,7 @@ class DataPreparation:
             DataPreparation.y_val = y_data
 
     @staticmethod
-    def make_predict_data(pca_df, feature_names,
-                          window_len):
+    def make_predict_data(pca_df, feature_names, window_len):
         """Transform 2D data to 3D that is compatible with LSTM layers.
          Generate data samples using the time windows ahead of each machine failure time;
         window_len: how many data points from each feature will be used to make one sample for the model.
@@ -423,37 +480,46 @@ class DataPreparation:
         """
 
         stride = 1
-        X = np.empty((1, 1, window_len * len(feature_names)),
-                     float)  # [samples, 1, n_features*window_len].  Samples will be appended below
+        X = np.empty(
+            (1, 1, window_len * len(feature_names)), float
+        )  # [samples, 1, n_features*window_len].  Samples will be appended below
         Y = np.empty((1), float)
 
         # Convert feature df and label df to lists
         # using pca_df get data for feature cols and targets for 'alarm' col
         data_as_list = pca_df[feature_names].to_numpy().tolist()
-        targets_as_list = pca_df['alarm'].tolist()
+        targets_as_list = pca_df["alarm"].tolist()
 
-        data_gen1 = TimeseriesGenerator(data_as_list, targets_as_list, window_len,
-                                        stride=stride,
-                                        sampling_rate=1, batch_size=1, shuffle=False)
+        data_gen1 = TimeseriesGenerator(
+            data_as_list,
+            targets_as_list,
+            window_len,
+            stride=stride,
+            sampling_rate=1,
+            batch_size=1,
+            shuffle=False,
+        )
 
         for i in range(len(data_gen1)):
             x, y = data_gen1[i]
             x = np.transpose(x).flatten()
             x = x.reshape((1, 1, len(x)))
             X = np.append(X, x, axis=0)
-            Y = np.append(Y, y / 2,
-                          axis=0)  # alarm windows are marked as 2, however, for the model,  use 1 becasue of the sigmoid function.
+            Y = np.append(
+                Y, y / 2, axis=0
+            )  # alarm windows are marked as 2, however, for the model,  use 1 becasue of the sigmoid function.
             # DataPreparation.progress_counter += 1
             # yield "event: inprogress\ndata: " + str(DataPreparation.progress_counter) + "\n\n"
 
         # remove samples where y is neither 0 nor 1
-        id_keep = [i for i, y in enumerate(Y) if (tf.round(y) == 1) or (tf.round(y) == 0)]
+        id_keep = [
+            i for i, y in enumerate(Y) if (tf.round(y) == 1) or (tf.round(y) == 0)
+        ]
         # First row is zeros, so delete it
         id_keep = np.delete(id_keep, 0)
         y_data = Y[id_keep]
         X_data = X[id_keep][:, :]
         return X_data, y_data
-
 
     # Prepare all data to be used for train and testing.  Store the results in Class Variables for easy retrieval
     @staticmethod
@@ -471,7 +537,7 @@ class DataPreparation:
         count_nulls_per_column = DataPreparation.get_null_list(df)
         # After human intervention, determine which cols to drop based on the nulls per column above.
         # Eventually the GUI will present the nuls count per column and the user will select cols to drop
-        bad_cols = ['Unnamed: 0', 'sensor_00', 'sensor_15', 'sensor_50', 'sensor_51']
+        bad_cols = ["Unnamed: 0", "sensor_00", "sensor_15", "sensor_50", "sensor_51"]
         DataPreparation.drop_bad_cols(df, bad_cols)
 
         # Change values of col 'machine_status' to numeric values
@@ -482,7 +548,9 @@ class DataPreparation:
         start_time_offset = 12 * 60  # 12 hrs
         stop_time_offset = 1  # 1 min
         # Add a target col
-        DataPreparation.add_target_col(df, failure_times, start_time_offset, stop_time_offset)
+        DataPreparation.add_target_col(
+            df, failure_times, start_time_offset, stop_time_offset
+        )
         # Select train, validation and test data based on failure times
         df_train, df_val, df_test = DataPreparation.separate_data(df, failure_times)
 
@@ -493,42 +561,60 @@ class DataPreparation:
 
         # Calculate mean of each column in the training df.  Then save the mean df.
         mean_df = df_train.mean()
-        joblib.dump(mean_df, 'tests/mean.gz')
+        joblib.dump(mean_df, "tests/mean.gz")
 
         #  Get scaler that has been fit to training data
         DataPreparation.min_max_scaler = DataPreparation.get_scaler(df_train)
         # Save scaler for use in prediction
-        joblib.dump(DataPreparation.min_max_scaler, 'tests/training_scaler.gz')
+        joblib.dump(DataPreparation.min_max_scaler, "tests/training_scaler.gz")
 
         # Scale (transform) using the previously formed min_max_scaler.  Results are ndarray
         # These scaled arrays are for all the sensors since PCA needs scaled data
-        DataPreparation.scaled_train = DataPreparation.scale_dataframe(DataPreparation.min_max_scaler, df_train)
-        DataPreparation.scaled_test = DataPreparation.scale_dataframe(DataPreparation.min_max_scaler, df_test)
-        DataPreparation.scaled_val = DataPreparation.scale_dataframe(DataPreparation.min_max_scaler, df_val)
+        DataPreparation.scaled_train = DataPreparation.scale_dataframe(
+            DataPreparation.min_max_scaler, df_train
+        )
+        DataPreparation.scaled_test = DataPreparation.scale_dataframe(
+            DataPreparation.min_max_scaler, df_test
+        )
+        DataPreparation.scaled_val = DataPreparation.scale_dataframe(
+            DataPreparation.min_max_scaler, df_val
+        )
 
         # This value will give the number of PC to make the sum of explained_variance_ratio reach 0.95
         num_top_components = 0.95
         # Get PCA df to determine which top features to include
-        pca_fit = DataPreparation.get_PCA(DataPreparation.scaled_train, num_top_components)
+        pca_fit = DataPreparation.get_PCA(
+            DataPreparation.scaled_train, num_top_components
+        )
         DataPreparation.pca = pca_fit
         # Get the number of PC that are needed to make the sum of explained_variance_ratio reach 0.95
         num_features_to_include = pca_fit.n_components_
         # Save PCA for use on prediction data
-        joblib.dump(DataPreparation.pca, 'tests/pca.gz')
+        joblib.dump(DataPreparation.pca, "tests/pca.gz")
         # Get Dataframe of ranked features determined by PCA
-        DataPreparation.ranked_features = DataPreparation.get_ranked_features(DataPreparation.pca, df_train.columns)
+        DataPreparation.ranked_features = DataPreparation.get_ranked_features(
+            DataPreparation.pca, df_train.columns
+        )
 
         DataPreparation.num_features_to_include = num_features_to_include
         DataPreparation.df_train_pca = DataPreparation.transform_df_by_pca(
-            DataPreparation.pca, df_train, DataPreparation.scaled_train,
-            num_features_to_include)
+            DataPreparation.pca,
+            df_train,
+            DataPreparation.scaled_train,
+            num_features_to_include,
+        )
         DataPreparation.df_test_pca = DataPreparation.transform_df_by_pca(
-            DataPreparation.pca, df_test, DataPreparation.scaled_test,
-            num_features_to_include)
+            DataPreparation.pca,
+            df_test,
+            DataPreparation.scaled_test,
+            num_features_to_include,
+        )
         DataPreparation.df_val_pca = DataPreparation.transform_df_by_pca(
-            DataPreparation.pca, df_val, DataPreparation.scaled_val,
-            num_features_to_include)
-
+            DataPreparation.pca,
+            df_val,
+            DataPreparation.scaled_val,
+            num_features_to_include,
+        )
 
     # Finish data prep that wasn't done in do_automated_data_prep().
     # This method should be done as an asychronous process so that the page does not get blocked.
@@ -542,12 +628,19 @@ class DataPreparation:
 
         feature_names = DataPreparation.df_train_pca.columns.tolist()[:-2]
 
-        train_failure_times = DataPreparation.get_failure_times(DataPreparation.df_train_pca)
-        test_failure_times = DataPreparation.get_failure_times(DataPreparation.df_test_pca)
-        val_failure_times = DataPreparation.get_failure_times(DataPreparation.df_val_pca)
+        train_failure_times = DataPreparation.get_failure_times(
+            DataPreparation.df_train_pca
+        )
+        test_failure_times = DataPreparation.get_failure_times(
+            DataPreparation.df_test_pca
+        )
+        val_failure_times = DataPreparation.get_failure_times(
+            DataPreparation.df_val_pca
+        )
 
-        DataPreparation.job_size = DataPreparation.__calculate_job_size(train_failure_times, test_failure_times,
-                                                                      val_failure_times)
+        DataPreparation.job_size = DataPreparation.__calculate_job_size(
+            train_failure_times, test_failure_times, val_failure_times
+        )
 
         print("Calculated job size:  {}".format(DataPreparation.job_size))
 
@@ -556,33 +649,46 @@ class DataPreparation:
 
         # Train windows use DataPreparation.stride for first windows, then stride=1 for second group.
 
-        yield from DataPreparation.timeseries_before_failure(DataPreparation.df_train_pca, train_failure_times,
-                                                             feature_names,
-                                                             DataPreparation.train_time_window_dimensions,
-                                                             DataPreparation.window_size, DataPreparation.stride,
-                                                             data_type=DataTypeEnum.TRAIN)
+        yield from DataPreparation.timeseries_before_failure(
+            DataPreparation.df_train_pca,
+            train_failure_times,
+            feature_names,
+            DataPreparation.train_time_window_dimensions,
+            DataPreparation.window_size,
+            DataPreparation.stride,
+            data_type=DataTypeEnum.TRAIN,
+        )
 
         # Test and Val use stride = 1 by default, no matter what gets passed in the call.
 
-        yield from DataPreparation.timeseries_before_failure(DataPreparation.df_test_pca, test_failure_times,
-                                                             feature_names,
-                                                             DataPreparation.test_time_window_dimensions,
-                                                             DataPreparation.window_size, DataPreparation.stride,
-                                                             data_type=DataTypeEnum.TEST)
+        yield from DataPreparation.timeseries_before_failure(
+            DataPreparation.df_test_pca,
+            test_failure_times,
+            feature_names,
+            DataPreparation.test_time_window_dimensions,
+            DataPreparation.window_size,
+            DataPreparation.stride,
+            data_type=DataTypeEnum.TEST,
+        )
 
         # Use same window dimensions for test and val
 
-        yield from DataPreparation.timeseries_before_failure(DataPreparation.df_val_pca, val_failure_times,
-                                                             feature_names,
-                                                             DataPreparation.test_time_window_dimensions,
-                                                             DataPreparation.window_size, DataPreparation.stride,
-                                                             data_type=DataTypeEnum.VAL)
+        yield from DataPreparation.timeseries_before_failure(
+            DataPreparation.df_val_pca,
+            val_failure_times,
+            feature_names,
+            DataPreparation.test_time_window_dimensions,
+            DataPreparation.window_size,
+            DataPreparation.stride,
+            data_type=DataTypeEnum.VAL,
+        )
 
         yield "event: jobfinished\ndata: " + "\n\n"
 
-
     @staticmethod
-    def __calculate_job_size(train_failure_times, test_failure_times, val_failure_times):
+    def __calculate_job_size(
+        train_failure_times, test_failure_times, val_failure_times
+    ):
         """Calculate job size for use in progress bar.
 
         :param train_failure_times: Failure times found in training data
@@ -598,37 +704,46 @@ class DataPreparation:
         job_size = 0
         # Training iterations
         for failure_time in train_failure_times:
-            first_window_size_in_minutes = \
-                DataPreparation.calculate_time_window_delta(failure_time,
-                                                            DataPreparation.train_time_window_dimensions[0],
-                                                            DataPreparation.train_time_window_dimensions[1]) / 5
+            first_window_size_in_minutes = (
+                DataPreparation.calculate_time_window_delta(
+                    failure_time,
+                    DataPreparation.train_time_window_dimensions[0],
+                    DataPreparation.train_time_window_dimensions[1],
+                )
+                / 5
+            )
             job_size += first_window_size_in_minutes + progress_adjustment_gen1
-            second_window_size_in_minutes = \
-                DataPreparation.calculate_time_window_delta(failure_time,
-                                                            DataPreparation.train_time_window_dimensions[2],
-                                                            DataPreparation.train_time_window_dimensions[3])
+            second_window_size_in_minutes = DataPreparation.calculate_time_window_delta(
+                failure_time,
+                DataPreparation.train_time_window_dimensions[2],
+                DataPreparation.train_time_window_dimensions[3],
+            )
             job_size += second_window_size_in_minutes + progress_adjustment_gen2
             # Test iterations
         for failure_time in test_failure_times:
-            window_size_in_minutes = \
-                DataPreparation.calculate_time_window_delta(failure_time,
-                                                            DataPreparation.test_time_window_dimensions[0],
-                                                            DataPreparation.test_time_window_dimensions[1])
+            window_size_in_minutes = DataPreparation.calculate_time_window_delta(
+                failure_time,
+                DataPreparation.test_time_window_dimensions[0],
+                DataPreparation.test_time_window_dimensions[1],
+            )
             job_size += window_size_in_minutes + progress_adjustment_gen2
         # Val iterations.  NOTE: Val iterations are same as test since it uses same time_window_dimension
         for failure_time in val_failure_times:
-            window_size_in_minutes = \
-                DataPreparation.calculate_time_window_delta(failure_time,
-                                                            DataPreparation.test_time_window_dimensions[0],
-                                                            DataPreparation.test_time_window_dimensions[1])
+            window_size_in_minutes = DataPreparation.calculate_time_window_delta(
+                failure_time,
+                DataPreparation.test_time_window_dimensions[0],
+                DataPreparation.test_time_window_dimensions[1],
+            )
             job_size += window_size_in_minutes + progress_adjustment_gen2
         return job_size
 
     @staticmethod
     def calculate_time_window_delta(failure_time, start_offset, end_offset):
         windows_start = failure_time - pd.Timedelta(
-            seconds=60 * start_offset)  # mins before the failure time
+            seconds=60 * start_offset
+        )  # mins before the failure time
         windows_end = failure_time - pd.Timedelta(
-            seconds=60 * end_offset)  # mins before the failure time
+            seconds=60 * end_offset
+        )  # mins before the failure time
         time_delta = (windows_end - windows_start).total_seconds() / 60
         return time_delta

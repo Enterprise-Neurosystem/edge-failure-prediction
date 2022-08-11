@@ -11,10 +11,12 @@ class CustomCallback(Callback):
         yield "event: initialize\ndata: " + str(CustomCallback.job_size) + "\n\n"
 
     def on_train_batch_end(self, batch, logs=None):
-        CustomCallback.train_loss.append(logs['loss'])
+        CustomCallback.train_loss.append(logs["loss"])
         print("End of batch {}".format(CustomCallback.progress_counter))
         CustomCallback.progress_counter += 1
-        yield "event: inprogress\ndata: " + str(CustomCallback.progress_counter) + "\n\n"
+        yield "event: inprogress\ndata: " + str(
+            CustomCallback.progress_counter
+        ) + "\n\n"
 
     def on_train_end(self, logs=None):
         print("End of training")

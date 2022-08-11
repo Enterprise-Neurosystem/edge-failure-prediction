@@ -5,15 +5,27 @@ from model.lstm_model import LSTMModel
 import joblib
 
 
-
 class TrainManager:
     model = None  # Make model a class variable for easy retrieval
 
-    def __init__(self, hidden_layer1_nodes, hidden_layer2_nodes, hidden_layer3_nodes, learning_rate):
-        self.train_input_shape = (DataPreparation.X_train.shape[1], DataPreparation.X_train.shape[2])
-        TrainManager.model = LSTMModel(self.train_input_shape, hidden_layer1_nodes, hidden_layer2_nodes, hidden_layer3_nodes)
+    def __init__(
+        self,
+        hidden_layer1_nodes,
+        hidden_layer2_nodes,
+        hidden_layer3_nodes,
+        learning_rate,
+    ):
+        self.train_input_shape = (
+            DataPreparation.X_train.shape[1],
+            DataPreparation.X_train.shape[2],
+        )
+        TrainManager.model = LSTMModel(
+            self.train_input_shape,
+            hidden_layer1_nodes,
+            hidden_layer2_nodes,
+            hidden_layer3_nodes,
+        )
         TrainManager.model.compile(learning_rate)
-
 
     # This is a learning rate callback.  Its purpose is to reduce the learning rate by a factor of 10 after 10 epochs
     @staticmethod
@@ -28,8 +40,8 @@ class TrainManager:
         # TODO:  make callbacks configurable
         callback = LearningRateScheduler(TrainManager.scheduler)
         history = TrainManager.model.fit(X, y, epochs, batch_size, callbacks=[callback])
-        TrainManager.model.save('tests/trained_model')
-        #joblib.dump(TrainManager.model, 'tests/trained_model')
+        TrainManager.model.save("tests/trained_model")
+        # joblib.dump(TrainManager.model, 'tests/trained_model')
 
         return history
 
@@ -37,6 +49,7 @@ class TrainManager:
     def calculate_job_size(epochs, batch_size):
         return epochs * batch_size
 
-   # def save_model(self):
-        # joblib.dump(self.model, 'tests/trained_model.gz')
-   #     tf.keras.models.save_model(self.model, 'tests/trained_model.gz')
+
+# def save_model(self):
+# joblib.dump(self.model, 'tests/trained_model.gz')
+#     tf.keras.models.save_model(self.model, 'tests/trained_model.gz')
