@@ -48,6 +48,7 @@ function startProcess(){
         eventSource.close();
         startBtnObj.disabled = false;
         trainTabBtn.disabled = false;
+        progressTextObj.innerHTML = "Data is prepared.  Ready to train"
     }, false);
 
 
