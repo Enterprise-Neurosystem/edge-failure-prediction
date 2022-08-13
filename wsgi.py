@@ -92,7 +92,7 @@ def test_model():
 
 @app.route('/runPredict')
 def run_predict():
-    file_name = 'static/cache/prediction_slice1.csv'
+    file_name = 'static/cache/kaggle_prediction_data/prediction_slice1.csv'
     scaler_filename = 'static/cache/training_scaler.gz'
     pca_filename = 'static/cache/pca.gz'
     means_filename = 'static/cache/mean.gz'
