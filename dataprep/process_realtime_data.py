@@ -64,13 +64,19 @@ class ProcessRealtimeData:
 
     def process_points(self):
         """Process one point from the prediction data
-        A data source generator is used to retrieve prediction data one point at a time.
+        This function is a generator that yields messages back to client.  The messages can be one of two types:
+        (1) event: update
+        (2) event: jobfinished
+        The message 'event: update' contains a json object associated with the 'data:' key.  The json object
+        contains the prediction data as well as plotting data for two PC's (see self.__create_dict())
+        An external data source generator (DataSourceManager.csv_line_reader()) is used to retrieve prediction data one
+        point at a time.
         :return: none  NOTE:  This class method is a generator, so there is no return. However it does yield
         a JSON serialized dictionary that contains the data for plotting the prediction graph
         """
 
         # gen is a generator that is an iterable of dictionaries. Each dictionary contains one row of prediction data
-        # including timestamp and PC data
+        # including timestamp and sensor data
         gen = DataSourceManager.csv_line_reader(self.csv_filename)
         while True:
             row = next(gen, None)  # Get next row where row is a dictionary
