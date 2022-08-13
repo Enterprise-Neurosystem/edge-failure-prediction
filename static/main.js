@@ -1,5 +1,6 @@
 let displayDataDiv = document.getElementById("displayDataDiv");
 let dataPrepStartBtn = document.getElementById('startBtn');
+let progressText = document.getElementById('progressText');
 window.onload = async function(){
     console.log("window.onload");
     let url = '/initData'
@@ -20,6 +21,7 @@ function displayJson(jsonData){
    // Parse json, put values into html page elements
     displayDataDiv.innerHTML = jsonData.data;
     dataPrepStartBtn.disabled = false;
+    progressText.innerHTML = "Data is loaded.  Press 'Start Data Prep' Btn";
     //onloadDataCheck();
 
 }
