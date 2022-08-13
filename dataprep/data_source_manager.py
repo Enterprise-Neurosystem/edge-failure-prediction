@@ -22,3 +22,8 @@ class DataSourceManager:
                 time.sleep(1 / 10)
                 yield row
 
+    @staticmethod
+    def get_kafka_data():
+        """
+        Create a generator that yields one row at a time of raw sensor data
+        """
