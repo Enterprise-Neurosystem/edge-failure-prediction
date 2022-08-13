@@ -7,6 +7,7 @@ from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
 from utils.data_type_enum import DataTypeEnum
 import joblib
 import tensorflow as tf
+from services.kaggle_data_service import KaggleDataService
 
 from services.sensor_data_service import SensorDataServiceCSV
 
@@ -38,7 +39,7 @@ class DataPreparation:
     original_null_list = None
     ranked_features = None
     num_features_to_include = None
-    bad_cols = ['Unnamed: 0', 'sensor_00', 'sensor_15', 'sensor_50', 'sensor_51']
+    bad_cols = ['sensor_00', 'sensor_15', 'sensor_50', 'sensor_51']
     job_size = 0
     progress_counter = 0
     min_max_scaler = None
@@ -55,7 +56,8 @@ class DataPreparation:
         :return: Sensor as a dataframe
         :type: Pandas DataFrame
         """
-        df = SensorDataServiceCSV.get_all_sensor_data()
+        #df = SensorDataServiceCSV.get_all_sensor_data()
+        df = KaggleDataService.get_all_as_df()
         return df
 
     # Drop columns in given list
@@ -471,8 +473,8 @@ class DataPreparation:
         count_nulls_per_column = DataPreparation.get_null_list(df)
         # After human intervention, determine which cols to drop based on the nulls per column above.
         # Eventually the GUI will present the nuls count per column and the user will select cols to drop
-        bad_cols = ['Unnamed: 0', 'sensor_00', 'sensor_15', 'sensor_50', 'sensor_51']
-        DataPreparation.drop_bad_cols(df, bad_cols)
+        #bad_cols = ['Unnamed: 0', 'sensor_00', 'sensor_15', 'sensor_50', 'sensor_51']
+        DataPreparation.drop_bad_cols(df, DataPreparation.bad_cols)
 
         # Change values of col 'machine_status' to numeric values
         DataPreparation.machine_status_to_numeric(df)
