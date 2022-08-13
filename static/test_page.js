@@ -1,5 +1,11 @@
+const testGraphIFrameObj = document.getElementById("testGraphIFrame");
+const testGraphBtnObj = document.getElementById("testingBtn");
+const testMsgObj = document.getElementById("testMsgId")
+testGraphBtnObj.addEventListener("click", testGraph);
+
 function testGraph(){
     testGraphBtnObj.disabled = true;
+    testMsgObj.innerHTML = "Testing Model";
     // Clear iframe
     testGraphIFrameObj.contentWindow.location.replace('about:blank');
     //testGraphIFrameObj.src='/working';
@@ -39,9 +45,7 @@ function displayTestGraphHTML(graphHTML){
 	}
 	predTabBtn.disabled = false;
 	testGraphBtnObj.disabled = false;
+	testMsgObj.innerHTML = "";
 }
 
 
-const testGraphIFrameObj = document.getElementById("testGraphIFrame");
-const testGraphBtnObj = document.getElementById("testingBtn");
-testGraphBtnObj.addEventListener("click", testGraph);
