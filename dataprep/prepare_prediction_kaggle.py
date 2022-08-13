@@ -5,10 +5,12 @@ These partitions are used to simulate real time data that is generated for model
 
 import pandas as pd
 import numpy as np
+from services.kaggle_data_service import KaggleDataService
 
 # Read data, set 'timestamp' values as index
-df = pd.read_csv('../static/cache/sensor.csv', index_col='timestamp', parse_dates=True)
-
+#df = pd.read_csv('../static/cache/sensor.csv', index_col='timestamp', parse_dates=True)
+#df.drop(['Unnamed: 0'], axis=1)
+df = KaggleDataService.get_all_as_df()
 
 # Column 'machine_status' has word values.
 # Convert string values in target to numerics.  Notice that 'BROKEN' is mapped to 1
