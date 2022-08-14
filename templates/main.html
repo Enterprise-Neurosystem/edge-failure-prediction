@@ -35,11 +35,11 @@
                     <div id="progressContainer" class="spanTwoCols">
                         <progress id="progressBar" value="0"></progress>
                     </div>
-                    <div class="progressText" id="progressText"></div>
+                    <div class="progressText" id="progressText">Loading data....Takes about 20 sec</div>
                 </fieldset>
                 <fieldset class="spanTwoCols">
                     <legend>Feature Choices</legend>
-                    <div id="displayDataDiv" class="featureGrid">Loading Data......</div>
+                    <div id="displayDataDiv" class="featureGrid">Loading Data....Takes about 20 sec</div>
                 </fieldset>
 
             </div>
@@ -159,6 +159,26 @@
         <div id="tab4" class="tabcontent">
             <h3>Model Prediction</h3>
             <div id="tab4PrepContainer" class="predictContainer">
+                 <fieldset class="spanTwoCols">
+                    <legend>Select a Data Source For Prediction</legend>
+                        <div class="predictRadioDiv">
+                            <input type="radio" name="dataSourceRadio" id="csv" value="csv">
+                            <label for="csv" >CSV</label>
+                            <div id="csvFilenamesDiv" class="radio-selectGroup" style="visibility: hidden" >
+                                <select id="predictCSV" >
+                                    {% for onefile in filenames %}
+                                        <option value="{{ onefile }}">{{ onefile }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <input type="radio" name="dataSourceRadio" id="kafka" value="kafka">
+                            <label for="kafka" class="predictLabel">Kafka</label>
+                            <div id="kafkaDiv" class="radio-selectGroup" style="visibility: hidden">
+                                Placeholder
+                            </div>
+
+                        </div>
+                </fieldset>
                 <fieldset class="spanTwoCols">
                     <legend>Graph Characteristics</legend>
                 </fieldset>
