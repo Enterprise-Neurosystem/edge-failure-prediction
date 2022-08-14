@@ -7,6 +7,7 @@
 
 let startPlotBtn = document.getElementById("startPredictBtn");
 let stopPlotBtn = document.getElementById("stopPredictBtn");
+let predictCSVNameObj = document.getElementById("predictCSV");
 startPlotBtn.addEventListener('click', startPlotProcess);
 stopPlotBtn.addEventListener('click', stopPlotProcess);
 
@@ -14,6 +15,8 @@ let eventSourceGraph;
 
 function startPlotProcess(){
     console.log("startProcess()");
+    let predictCSVName = predictCSVNameObj.options[predictCSVNameObj.selectedIndex].text;
+    const url = "/runPredict?" + "predictCSVFileName=" + predictCSVName;
     initPlot();
     if(eventSourceGraph){
         eventSourceGraph.close();
@@ -21,7 +24,7 @@ function startPlotProcess(){
     // Create a JS EventSource object and give it the URL of a long running task.  The EventSource object
     // keeps the connection open to the given URL so that the process at the end point can send messages
     // back to the EventSource object.
-    eventSourceGraph = new EventSource("/runPredict");
+    eventSourceGraph = new EventSource(url);
 
     // NOTE:  This event 'initialize' is currently not used
     eventSourceGraph.addEventListener("initialize", function(event){
