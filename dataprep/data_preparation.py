@@ -90,13 +90,15 @@ class DataPreparation:
     @staticmethod
     def replace_nan_with_mean(df):
         """
-        Replace NaN columnwise with mean of each column inplace
+        First replace all empty cells with NaN
+        Then replace NaN columnwise with mean of each column inplace
         :param df: DataFrame
         :type: Pandas DataFrame
         :return: none
         """
-        df_cols = df.columns
-        df.fillna(value=df[df_cols].mean(), inplace=True)
+        cols = df.columns
+        df_no_blank = df.replace(r'^\s*$', np.nan, regex=True)
+        df.fillna(value=df_no_blank[cols].mean(), inplace=True)
 
     @staticmethod
     def machine_status_to_numeric(df):
