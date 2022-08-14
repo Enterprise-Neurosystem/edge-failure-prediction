@@ -1,6 +1,16 @@
 let displayDataDiv = document.getElementById("displayDataDiv");
 let dataPrepStartBtn = document.getElementById('startBtn');
 let progressText = document.getElementById('progressText');
+let csvRadioObj = document.getElementById("csv");
+let csvDivObj = document.getElementById('csvFilenamesDiv');
+let kafkaRadioObj = document.getElementById('kafka');
+let kafkaDivObj = document.getElementById('kafkaDiv');
+
+
+csvRadioObj.addEventListener('click', controlCSVDisplay);
+kafkaRadioObj.addEventListener('click', controlKafkaDisplay);
+
+
 window.onload = async function(){
     console.log("window.onload");
     let url = '/initData'
@@ -56,4 +66,12 @@ function onloadDataCheck(){
     }
     });
 
+}
+function controlCSVDisplay(event){
+    csvDivObj.style.visibility = 'visible';
+    kafkaDivObj.style.visibility = 'hidden';
+}
+function controlKafkaDisplay(event){
+    csvDivObj.style.visibility = 'hidden';
+    kafkaDivObj.style.visibility = 'visible';
 }
