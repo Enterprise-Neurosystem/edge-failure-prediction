@@ -1,3 +1,5 @@
+from os.path import join
+
 from flask import Flask, render_template, Response, request, jsonify
 import os
 from dataprep.data_preparation import DataPreparation
@@ -5,6 +7,7 @@ from graphs.graph_manager import GraphManager
 from managers.train_manager import TrainManager
 from managers.test_manager import TestManager
 from dataprep.process_realtime_data import ProcessRealtimeData
+from utils.data_file_manager import DataFileManager
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -24,7 +27,9 @@ def main():
     path = 'static/cache/'
     if not os.path.exists(path):
         os.makedirs(path)
-    return render_template('main.html')
+    csv_filenames = DataFileManager.get_file_names_in_path('static/prediction_data')
+
+    return render_template('main.html', filenames=csv_filenames)
 
 @app.route('/initData', methods=['POST'])
 def init_data():
@@ -92,7 +97,13 @@ def test_model():
 
 @app.route('/runPredict')
 def run_predict():
-    file_name = 'static/cache/kaggle_prediction_data/prediction_slice1.csv'
+    """
+    This function is a generator for prediction
+    """
+    #file_name = 'static/prediction_data/prediction_slice1.csv'
+    file_name_only = request.args.get('predictCSVFileName')
+    path = 'static/prediction_data'
+    file_name = join(path, file_name_only)
     scaler_filename = 'static/cache/training_scaler.gz'
     pca_filename = 'static/cache/pca.gz'
     means_filename = 'static/cache/mean.gz'
