@@ -4,6 +4,7 @@ from dataprep.data_source_manager import DataSourceManager
 from dataprep.data_preparation import DataPreparation
 from model.lstm_model import LSTMModel
 import pandas as pd
+import numpy as np
 
 
 class ProcessRealtimeData:
@@ -86,6 +87,7 @@ class ProcessRealtimeData:
                 yield "event: jobfinished\ndata: " + "none" + "\n\n"
                 break  # Terminate this event loop
             else:
+
                 # Convert row dictionary to DataFrame
                 row_as_df = pd.DataFrame(row, index=[0])
                 # Set the timestamp values of the prediction window's start and end
@@ -97,8 +99,11 @@ class ProcessRealtimeData:
                 row_as_df.set_index('timestamp', inplace=True)
                 # Drop bad columns
                 DataPreparation.drop_bad_cols(row_as_df, self.bad_cols)
+                # First replace any empty values with NaN
+                row_as_df = row_as_df.replace(r'^\s*$', np.nan, regex=True)
                 # Replace any nan with mean for that column that was obtained when model was trained
                 row_as_df.fillna(value=self.means, inplace=True)
+
                 # Drop col 'machine_status'
                 row_as_df.drop('machine_status', axis=1, inplace=True)
 
