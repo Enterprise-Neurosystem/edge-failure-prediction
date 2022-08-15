@@ -70,7 +70,8 @@ class DataPreparation:
         :param col_list: List of unusable column names
         :return: none
         """
-        df.drop(col_list, axis=1, inplace=True)
+        df.drop(col_list, axis=1, errors='ignore', inplace=True)
+
 
     # How many nulls in each col.
     # return Series with Index (col names) and values (number of nulls for col)
