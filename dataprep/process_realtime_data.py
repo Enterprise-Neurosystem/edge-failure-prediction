@@ -7,12 +7,14 @@ import pandas as pd
 import numpy as np
 
 
+
 class ProcessRealtimeData:
     """Class used to process, predict and yield plotting data for one point
 
     """
     def __init__(self, predict_window_size, scaler_filename, pca_filename,
-                 means_filename, bad_cols_filename, model_filename, csv_filename=None):
+                 means_filename, bad_cols_filename, model_filename, data_source,
+                 csv_filename=None, group_id=None):
         """Class initializer (Constructor)
 
         Just so that the model does not have to be retrained each time we want to make a prediction,
@@ -36,6 +38,8 @@ class ProcessRealtimeData:
         """
         self.predict_window_size = predict_window_size
         self.csv_filename = csv_filename
+        self.group_id = group_id
+        self.data_source = data_source
         self.prediction_buff = []  # This buffer will be a list of DataFrames, where each row of predict data is a
                                     # Dataframe
         self.row_counter = 0
@@ -78,7 +82,11 @@ class ProcessRealtimeData:
 
         # gen is a generator that is an iterable of dictionaries. Each dictionary contains one row of prediction data
         # including timestamp and sensor data
-        gen = DataSourceManager.csv_line_reader(self.csv_filename)
+        gen = None
+        if self.data_source == 'csv':
+            gen = DataSourceManager.csv_line_reader(self.csv_filename)
+        elif self.data_source == 'kafka':
+            gen = DataSourceManager.get_kafka_data(self.group_id)
         while True:
             row = next(gen, None)  # Get next row where row is a dictionary
             if row is None:
