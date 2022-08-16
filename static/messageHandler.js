@@ -5,9 +5,14 @@
 // 'jobfinished'.  There is also a listener for 'initialize', but it is not needed in this application.
 
 
-let startPlotBtn = document.getElementById("startPredictBtn");
-let stopPlotBtn = document.getElementById("stopPredictBtn");
-let predictCSVNameObj = document.getElementById("predictCSV");
+const startPlotBtn = document.getElementById("startPredictBtn");
+const stopPlotBtn = document.getElementById("stopPredictBtn");
+const predictCSVNameObj = document.getElementById("predictCSV");
+const dataSourceRadioObj = document.getElementsByName("dataSourceRadio");
+const groupIdObj = document.getElementById("groupId");
+const predMsgsObj = document.getElementById("predMsgs");
+
+
 startPlotBtn.addEventListener('click', startPlotProcess);
 stopPlotBtn.addEventListener('click', stopPlotProcess);
 
@@ -15,8 +20,38 @@ let eventSourceGraph;
 
 function startPlotProcess(){
     console.log("startProcess()");
-    let predictCSVName = predictCSVNameObj.options[predictCSVNameObj.selectedIndex].text;
-    const url = "/runPredict?" + "predictCSVFileName=" + predictCSVName;
+    let selectedRadio = Array.from(dataSourceRadioObj).find(radio => radio.checked);
+    if(selectedRadio == null ){
+        console.log("returning no radio selected")
+        predMsgsObj.innerHTML = "No data source has been selected"
+        return
+    }
+
+    console.log("selectedRadio: "+ selectedRadio.value);
+    let groupId = null, predictCSVName = null;
+    if(selectedRadio.value == 'kafka'){
+        groupId = groupIdObj.value
+        console.log("groupId: " + groupId);
+        if(groupId == null){
+            predMsgsObj.innerHTML = "Please enter your group id";
+            return;
+        }
+    }else{
+        if(selectedRadio.value == 'csv') {
+            predictCSVName = predictCSVNameObj.options[predictCSVNameObj.selectedIndex].text;
+            console.log("predictCSVName: " + predictCSVName);
+            if(predictCSVName == "--Select File Name--"){
+                predMsgsObj.innerHTML = "Please select a CSV data source";
+                return;
+            }
+        }
+    }
+
+
+
+    const url = "/runPredict?" + "predictCSVFileName=" + predictCSVName + "&dataSource=" + selectedRadio.value +
+                "&groupId=" + groupId;
+    console.log("URL: " + url);
     initPlot();
     if(eventSourceGraph){
         eventSourceGraph.close();
