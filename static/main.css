@@ -203,7 +203,7 @@ fieldset{
 
     margin: 10px auto;
     width: 400px;
-    height: 250px;
+    height: 320px;
     background-color: #f1f1f1;
     display: grid;
     grid-template-columns: 200px 200px;
@@ -221,7 +221,7 @@ fieldset{
 .predictRadioDiv{
     text-align: left;
     display: grid;
-    grid-template-columns: 50px 100px 100px;
+    grid-template-columns: 50px 100px 150px;
     grid-row: auto;
     grid-column-gap: 20px;
     grid-row-gap: 10px;
@@ -232,12 +232,19 @@ fieldset{
 .predictKafka{
     visibility: hidden;
 }
+.predictMsg{
+    color: red;
+}
 .radioContainer{
 
 }
 .radio-selectGroup{
-    float: left;
+    display: inline-block;
+    /*float: left;*/
     /*padding: 10px;*/
+}
+.kafkaLabel{
+    display: inline-block;
 }
 input[radio] {
   height: 20px;
