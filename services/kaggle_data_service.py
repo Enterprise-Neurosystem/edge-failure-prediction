@@ -3,7 +3,7 @@ import pandas as pd
 import psycopg2
 
 class KaggleDataService:
-    GET_ALL_ROWS = 'Select * from originalkaggle order by timestamp'
+    GET_ALL_ROWS = 'Select * from newkaggle order by timestamp'
 
     @staticmethod
     def get_all_as_df():
