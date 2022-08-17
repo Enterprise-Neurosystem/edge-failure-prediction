@@ -26,4 +26,4 @@ failure_times = df[df['machine_status'] == 1].index
 # Write the data slices to csv files
 for i, failure_time in enumerate(failure_times):
     df.loc[(failure_time - pd.Timedelta(seconds=60*60*12)) : failure_time, :].\
-        to_csv('../static/cache/prediction_data/prediction_slice'+str(i)+'.csv')
+        to_csv('../static/prediction_data/prediction_slice'+str(i)+'.csv')
