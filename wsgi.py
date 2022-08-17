@@ -111,15 +111,15 @@ def run_predict():
         file_name = join(path, file_name_only)
     else:
         group_id = request.args.get('groupId')
-    scaler_filename = 'static/cache/training_scaler.gz'
-    pca_filename = 'static/cache/pca.gz'
-    means_filename = 'static/cache/mean.gz'
-    bad_cols_filename = 'static/cache/bad_cols.gz'
-    model_filename = 'static/cache/trained_model/saved_model.pb'
-    predict_window_size = 20
+        scaler_filename = 'static/cache/training_scaler.gz'
+        pca_filename = 'static/cache/pca.gz'
+        means_filename = 'static/cache/mean.gz'
+        bad_cols_filename = 'static/cache/bad_cols.gz'
+        model_filename = 'static/cache/trained_model/saved_model.pb'
+        predict_window_size = 20
     rtd = ProcessRealtimeData(predict_window_size, scaler_filename, pca_filename,
-                              means_filename, bad_cols_filename, model_filename, data_source,
-                              csv_filename=file_name, group_id=group_id)
+                                means_filename, bad_cols_filename, model_filename, data_source,
+                                csv_filename=file_name, group_id=group_id)
     rtd.process_points()
     return Response(rtd.process_points(), mimetype='text/event-stream')
 
