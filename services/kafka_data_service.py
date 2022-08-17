@@ -4,14 +4,25 @@ import os
 
 
 class KafkaDataService:
-    sensor_names_list = ["sensor_" + str(i + 1) for i in range(48)]
+    sensor_names_list = ['sensor_01', 'sensor_02', 'sensor_03', 'sensor_04', 'sensor_05',
+                         'sensor_06', 'sensor_07', 'sensor_08', 'sensor_09', 'sensor_10',
+                         'sensor_11', 'sensor_12', 'sensor_13', 'sensor_14', 'sensor_16',
+                         'sensor_17', 'sensor_18', 'sensor_19', 'sensor_20', 'sensor_21',
+                         'sensor_22', 'sensor_23', 'sensor_24', 'sensor_25', 'sensor_26',
+                         'sensor_27', 'sensor_28', 'sensor_29', 'sensor_30', 'sensor_31',
+                         'sensor_32', 'sensor_33', 'sensor_34', 'sensor_35', 'sensor_36',
+                         'sensor_37', 'sensor_38', 'sensor_39', 'sensor_40', 'sensor_41',
+                         'sensor_42', 'sensor_43', 'sensor_44', 'sensor_45', 'sensor_46',
+                         'sensor_47', 'sensor_48', 'sensor_49']
 
     def __init__(self):
         # get environment variables (taken directly from kafka tutorial)
 
         # location of the Kafka Bootstrap Server loaded from the environment variable.
-        # e.g. 'my-kafka-bootstrap.namespace.svc.cluster.local:9092'
+        # NOTE: Use the url below for use within the cluster
         self.KAFKA_BOOTSTRAP_SERVER = 'kafka-cluster-kafka-bootstrap.kafka-anomaly.svc.cluster.local'
+        # TODO:  Use the url below for use outside the cluster
+        # self.KAFKA_BOOTSTRAP_SERVER = 'kafka-cluster-kafka-bootstrap-kafka-anomaly.apps.ieee.8goc.p1.openshiftapps.com:443'
 
         # SASL settings.  Defaults to SASL_SSL/PLAIN.
         # No auth would be PLAINTEXT/''
@@ -43,7 +54,6 @@ class KafkaDataService:
         return msg_dict
 
     def get_Kafka_consumer(self):
-        self_type = type(self)
         consumer = KafkaConsumer(
             "sensor-data",
             group_id=self.KAFKA_CONSUMER_GROUP,
@@ -54,6 +64,20 @@ class KafkaDataService:
             sasl_plain_password=self.KAFKA_PASSWORD,
             api_version_auto_timeout_ms=30000,
             request_timeout_ms=450000,
+        )
+        return consumer
+
+    def get_Kafka_consumer_external(self):
+        consumer = KafkaConsumer(
+            "sensor-data",
+            group_id=self.KAFKA_CONSUMER_GROUP,
+            security_protocol="SSL",
+            ssl_cafile='static/kafka_certificate/ca.crt',
+            bootstrap_servers=[self.KAFKA_BOOTSTRAP_SERVER],
+            sasl_plain_username=self.KAFKA_USERNAME,
+            sasl_plain_password=self.KAFKA_PASSWORD,
+            api_version_auto_timeout_ms=30000,
+            request_timeout_ms=450000
         )
         return consumer
 
