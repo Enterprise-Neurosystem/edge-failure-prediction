@@ -103,6 +103,7 @@ def run_predict():
     #file_name = 'static/prediction_data/prediction_slice1.csv'
     group_id = None  # Used for 'kafka' data source
     file_name = None # Used for 'csv' data source
+    predict_window_size = 20
 
     data_source = request.args.get('dataSource')
     if data_source == 'csv':
@@ -116,7 +117,7 @@ def run_predict():
         means_filename = 'static/cache/mean.gz'
         bad_cols_filename = 'static/cache/bad_cols.gz'
         model_filename = 'static/cache/trained_model/saved_model.pb'
-        predict_window_size = 20
+
     rtd = ProcessRealtimeData(predict_window_size, scaler_filename, pca_filename,
                                 means_filename, bad_cols_filename, model_filename, data_source,
                                 csv_filename=file_name, group_id=group_id)
