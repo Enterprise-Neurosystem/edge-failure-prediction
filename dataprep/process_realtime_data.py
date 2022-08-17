@@ -95,8 +95,7 @@ class ProcessRealtimeData:
                 yield "event: jobfinished\ndata: " + "none" + "\n\n"
                 break  # Terminate this event loop
             else:
-
-                # Convert row dictionary to DataFrame
+            # Convert row dictionary to DataFrame
                 row_as_df = pd.DataFrame(row, index=[0])
                 # Set the timestamp values of the prediction window's start and end
                 predict_window_end = \
