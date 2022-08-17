@@ -117,7 +117,7 @@ def run_predict():
         means_filename = 'static/cache/mean.gz'
         bad_cols_filename = 'static/cache/bad_cols.gz'
         model_filename = 'static/cache/trained_model/saved_model.pb'
-
+        
     rtd = ProcessRealtimeData(predict_window_size, scaler_filename, pca_filename,
                                 means_filename, bad_cols_filename, model_filename, data_source,
                                 csv_filename=file_name, group_id=group_id)
