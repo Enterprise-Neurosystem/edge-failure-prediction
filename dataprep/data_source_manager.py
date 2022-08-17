@@ -23,7 +23,7 @@ class DataSourceManager:
         with open(file_name, 'r') as read_obj:
             dict_reader = DictReader(read_obj)
             for row in dict_reader:
-                # print("row in reader: {}".format(row))
+                #print("row in reader: {}".format(row))
                 time.sleep(1 / 10)
                 yield row
 
@@ -47,7 +47,7 @@ class DataSourceManager:
                 msg_dict = kafka_data_service.message_to_dict(msg_list)
 
                 if id_g == int(group_id):
-                    # print("YIELDING: {}".format(msg_dict))
+                    print("YIELDING: {}".format(msg_dict))
                     yield msg_dict
 
         finally:
