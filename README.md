@@ -1,10 +1,15 @@
 # edge-prediction-failure
 This web app is was written to serve the needs of a hands on workshop where much of the data preparation work is automated and is in read only form.
 
-Also, currently the data used by the app is in csv format.  To use the Kaggle data, sensors.csv, download it from https://www.kaggle.com/datasets/nphantawee/pump-sensor-data 
-and place the file in the project as /static/sensors.csv.
+Acknowledgement: The data preparation to train the model is an adaptation the work done by 
+Xiaxiau, https://www.kaggle.com/code/xiaxiaxu/predictmachinefailureinadvance/notebook
 
-We will be moving the data contained in sensors.csv to a database where data really belongs.
+The source of the data used in this application is found at: https://www.kaggle.com/datasets/nphantawee/pump-sensor-data 
+The source data was downloaded as a csv and then was uploaded to a PostgreSQL database.
+
+The ML model used in this application needs improvement, particularly in the prediction.  The next version will include those improvements.
+
+The prediction feature offers the user to use one of two data sources.  One choice is obtained from a list of csv files that each contain prediction data with 720 data points.  The other choice is to obtain the data from Apache Kafka which simulates data as it would be streamed from the sensors.
 
 ## Quickstart
 
