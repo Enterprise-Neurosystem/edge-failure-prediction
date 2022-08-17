@@ -5,6 +5,7 @@ Acknowledgement: The data preparation to train the model is an adaptation the wo
 Xiaxiau, https://www.kaggle.com/code/xiaxiaxu/predictmachinefailureinadvance/notebook
 
 The source of the data used in this application is found at: https://www.kaggle.com/datasets/nphantawee/pump-sensor-data 
+
 The source data was downloaded as a csv and then was uploaded to a PostgreSQL database.
 
 The ML model used in this application needs improvement, particularly in the prediction.  The next version will include those improvements.
