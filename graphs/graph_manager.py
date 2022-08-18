@@ -17,9 +17,9 @@ class GraphManager:
         fig_width = 10
         plt.switch_backend('Agg')
         plt.figure(figsize=(fig_width, fig_height))
-        plt.title('Cross-Entropy Loss and Binary-Accuracy')
+        plt.title('Cross-Entropy Loss' )
         plt.plot(history.history['loss'], label='Loss')
-        plt.plot(history.history['binary_accuracy'], label='Accuracy')
+        #plt.plot(history.history['binary_accuracy'], label='Accuracy')
 
         plt.legend()
         plt.xlabel("Epoch")
