@@ -12,6 +12,18 @@ The ML model used in this application needs improvement, particularly in the pre
 
 The prediction feature offers the user to use one of two data sources.  One choice is obtained from a list of csv files that each contain prediction data with 720 data points.  The other choice is to obtain the data from Apache Kafka which simulates data as it would be streamed from the sensors.
 
+## Team Members
+1. Audrey Reznik
+1. Cameron Garrison
+1. Cory Latschkowski
+1. Eli Guidera
+
+
+## Meeting Information
+Meetings are held every Thursday, 9-10 MST
+
+Contact Eli Guidera (guiderae@yahoo.com) for questions/comments/contributions.
+
 ## Quickstart
 
 Setup local development
