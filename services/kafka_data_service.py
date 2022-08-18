@@ -22,7 +22,7 @@ class KafkaDataService:
         # NOTE: Use the url below for use within the cluster
         self.KAFKA_BOOTSTRAP_SERVER = 'kafka-cluster-kafka-bootstrap.kafka-anomaly.svc.cluster.local'
         # TODO:  Use the url below for use outside the cluster
-        # self.KAFKA_BOOTSTRAP_SERVER = 'kafka-cluster-kafka-bootstrap-kafka-anomaly.apps.ieee.8goc.p1.openshiftapps.com:443'
+        #self.KAFKA_BOOTSTRAP_SERVER = 'kafka-cluster-kafka-bootstrap-kafka-anomaly.apps.ieee.8goc.p1.openshiftapps.com:443'
 
         # SASL settings.  Defaults to SASL_SSL/PLAIN.
         # No auth would be PLAINTEXT/''
@@ -64,6 +64,8 @@ class KafkaDataService:
             sasl_plain_password=self.KAFKA_PASSWORD,
             api_version_auto_timeout_ms=30000,
             request_timeout_ms=450000,
+            session_timeout_ms=20000,
+            heartbeat_interval_ms=6000
         )
         return consumer
 
