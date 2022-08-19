@@ -1,6 +1,6 @@
 function trainGraph(){
     //console.log("trainGraph()");
-    graphDivObj.innerHTML = "<img src='static/workingMsg.png'/>";
+    graphDivObj.innerHTML = "<img src='static/TrainMsg.png'/>";
     let url = '/train-model';
     let formObj = document.getElementById("trainForm")
     let formData = new FormData(formObj);
