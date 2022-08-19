@@ -32,7 +32,7 @@ function startPlotProcess(){
     if(selectedRadio.value == 'kafka'){
         groupId = groupIdObj.value
         console.log("groupId: " + groupId);
-        if(groupId == null){
+        if(groupId.length == 0){
             predMsgsObj.innerHTML = "Please enter your group id";
             return;
         }
