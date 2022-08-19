@@ -44,7 +44,7 @@ class KafkaDataService:
 
         # Kafka consumer group to which this consumer belongs
         now = datetime.now()
-        current_time = now.strftime("%H:%M:%S")
+        current_time = now.strftime("%D:%H:%M:%S")
         self.KAFKA_CONSUMER_GROUP = current_time
         #self.sensor_names_list = ["sensor_" + str(i+1) for i in range(48)]
 
