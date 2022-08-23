@@ -44,6 +44,7 @@ class DataPreparation:
     progress_counter = 0
     min_max_scaler = None
     pca = None
+    train_history = None
 
     def __init__(self):
         DataPreparation.do_automated_data_prep()
