@@ -67,8 +67,9 @@ def progress_shape_data():
 @app.route('/train-model', methods=['GET', 'POST'])
 def train_model():
     """
-    This is an asyncronous function that generates the training graph stats.
-    :return: An <img> tag that contains the serialized version of the graph
+    This is an asyncronous function that trains the model and generates the training graph stats.  The stats
+    are cached in the class variable DataPreparation.train_history
+    :return: An <img> tag that contains the src path to a "Finished" message
     """
     epochs = int(request.form.get("epochsSelect"))
     batch_size = int(request.form.get("batchSizeSelect"))
@@ -81,8 +82,17 @@ def train_model():
     # Create a TrainManager which builds and compiles model.
     train_manager = TrainManager(hidden_layer1_nodes, hidden_layer2_nodes, hidden_layer3_nodes, learning_rate)
     # Get history of the training
-    train_history = train_manager.fit_model(DataPreparation.X_train, DataPreparation.y_train, epochs, batch_size)
-    # Produce the usual loss/accuracy graph of the training.
+    DataPreparation.train_history = train_manager.fit_model(DataPreparation.X_train, DataPreparation.y_train, epochs, batch_size)
+    return "<img src='static/TrainFinished.png'/>"
+
+
+@app.route('/display-train-graph', methods=['GET', 'POST'])
+def display_train_graph():
+    """
+    Get the history of the model.fit(), and graph the loss
+    :return: the loss graph that has been encoded
+    """
+    train_history = DataPreparation.train_history
     encoded_image = GraphManager.plot_history(train_history)
     return encoded_image
 
