@@ -71,7 +71,7 @@
 
 ## Making a Prediction with the Model
 
-1. Click on the **Prediction** tab.
+1. Click on the **Predict** tab.
 
 2. Before you can make a prediction, you must first select a data source for the prediction data. There are two options: 
 
