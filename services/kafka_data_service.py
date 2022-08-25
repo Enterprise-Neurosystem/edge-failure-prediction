@@ -1,6 +1,7 @@
 from kafka import KafkaConsumer
 import json
 import os
+from datetime import datetime
 
 
 class KafkaDataService:
@@ -42,7 +43,9 @@ class KafkaDataService:
         self.KAFKA_TOPIC = 'sensor-data'
 
         # Kafka consumer group to which this consumer belongs
-        self.KAFKA_CONSUMER_GROUP = "notebook-consumer"
+        now = datetime.now()
+        current_time = now.strftime("%D:%H:%M:%S")
+        self.KAFKA_CONSUMER_GROUP = current_time
         #self.sensor_names_list = ["sensor_" + str(i+1) for i in range(48)]
 
     def message_to_dict(self, msg):
