@@ -20,9 +20,9 @@ class ConnectionPoolSingleton:
             raise Exception("Cannot create more than one instance of this class")
         else:
             ConnectionPoolSingleton.__connection_pool = psycopg2.pool.ThreadedConnectionPool(1, 30,
-                                                 host='db-anomalydetect-postgres.chanowujpkf4.us-east-1.rds.amazonaws.com',
-                                                 user='ad_postgres',
-                                                 password='AWSw0rksh0p',
+                                                 host='waterpump.ci3tyclo8vsc.us-east-1.rds.amazonaws.com',
+                                                 user='postgres',
+                                                 password='FR2s3rv2ll3y',
                                                  database ='postgres')
     @staticmethod
     def getConnectionPool():
