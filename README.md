@@ -1,4 +1,4 @@
-# edge-prediction-failure
+# edge-failure-prediction
 This web app is was written to serve the needs of a hands on workshop where much of the data preparation work is automated and is in read only form.
 
 Acknowledgement: The data preparation to train the model is an adaptation the work done by 
