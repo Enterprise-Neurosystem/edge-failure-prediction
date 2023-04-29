@@ -1,6 +1,8 @@
 # edge-db
 
-## command dump
+## Command Dump
+
+Setup local port forwarding to database (localhost:5432)
 
 ```
 oc -n edge-db \
@@ -9,13 +11,5 @@ oc -n edge-db \
 ```
 
 ```
-oc cp ../dump/waterpumpschema.sql edge-db-0:/tmp
-oc cp sensor.csv.zip edge-db-0:/tmp
-oc rsh edge-db-0
-```
-
-```
-cd /tmp
-unzip sensor.csv.zip
-psql -d edge-db -f waterpumpschema.sql
+setup.sh
 ```
