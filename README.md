@@ -49,7 +49,9 @@ Setup local postgres db
 
 ```
 cd edge-db
-./setup.sh
+
+. ./setup.sh
+setup_container
 
 cd ..
 ```

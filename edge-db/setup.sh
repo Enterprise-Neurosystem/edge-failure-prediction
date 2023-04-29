@@ -2,6 +2,8 @@
 # set -x
 
 setup_container(){
+  docker stop edge-db
+
   docker run \
     --name edge-db \
     -d --rm \
@@ -15,7 +17,7 @@ setup_container(){
   docker exec \
     -it \
     edge-db \
-    /bin/bash -c ./setup.sh
+    /bin/bash -c ". setup.sh; setup_db"
 }
 
 setup_db(){
@@ -26,6 +28,3 @@ setup_db(){
   unzip -o sensor.csv.zip
   psql -d edge-db -f db.sql
 }
-
-setup_container
-setup_db
