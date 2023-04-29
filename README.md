@@ -26,13 +26,16 @@ Meetings are held every Thursday, 9-10 MST
 
 Contact Eli Guidera (guiderae@yahoo.com) for questions/comments/contributions.
 
+## Prerequisites
+
+Last tested with:
+
+- Python 3.8
+- OpenShift 4.10
+
 ## Quickstart
 
 Setup local development
-
-Tested with:
-
-- Python 3.8
 
 ```
 python3 -m venv venv
