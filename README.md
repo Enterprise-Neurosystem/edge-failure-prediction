@@ -36,19 +36,20 @@ python3 -m venv venv
 pip install -r requirements.txt
 ```
 
+Setup local postgres db
+
+```
+cd edge-db
+./setup.sh
+
+cd ..
+```
+
 Run app locally
 
 ```
-# use postgres db in openshift
-oc -n edge-db \
-  port-forward \
-  svc/edge-db 5432:5432
-```
-
-```
 # devel
-python3 wsgi.py
+cd src
 
-# gunicorn
-gunicorn wsgi:application -b 0.0.0.0:8080
+python3 wsgi.py
 ```
