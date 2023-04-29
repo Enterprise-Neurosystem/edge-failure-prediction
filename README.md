@@ -30,6 +30,10 @@ Contact Eli Guidera (guiderae@yahoo.com) for questions/comments/contributions.
 
 Setup local development
 
+Tested with:
+
+- Python 3.8
+
 ```
 python3 -m venv venv
 . venv/bin/activate
