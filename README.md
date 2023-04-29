@@ -32,6 +32,8 @@ Last tested with:
 
 - Python 3.8
 - OpenShift 4.10
+- Shell: bash
+- OS: mac,linux (various)
 
 ## Quickstart
 
