@@ -3,6 +3,7 @@ import psycopg2
 from psycopg2 import pool
 
 db_host = os.environ.get('DB_HOST', 'localhost')
+db_port = os.environ.get('DB_PORT', '5432')
 db_user = os.environ.get('DB_USER', 'edge-db')
 db_password = os.environ.get('DB_PASSWORD', 'failure')
 db_database = os.environ.get('DB_DATABASE', 'edge-db')
@@ -27,7 +28,7 @@ class ConnectionPoolSingleton:
         else:
             ConnectionPoolSingleton.__connection_pool = psycopg2.pool.ThreadedConnectionPool(1, 30,
                                                  host=db_host,
-                                                 port='5432',
+                                                 port=db_port,
                                                  user=db_user,
                                                  password=db_password,
                                                  database=db_database)
