@@ -37,14 +37,6 @@ Last tested with:
 
 ## Quickstart
 
-Setup local development
-
-```
-python3 -m venv venv
-. venv/bin/activate
-pip install -r src/requirements.txt
-```
-
 Setup local postgres db
 
 ```
@@ -56,11 +48,18 @@ setup_container
 cd ..
 ```
 
+Setup local development
+
+```
+cd src
+
+python3 -m venv venv
+. venv/bin/activate
+pip install -r src/requirements.txt
+```
+
 Run app locally
 
 ```
-# devel
-cd src
-
 python3 wsgi.py
 ```
