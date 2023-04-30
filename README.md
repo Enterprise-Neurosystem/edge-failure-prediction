@@ -67,9 +67,7 @@ python3 wsgi.py
 Setup Jupyter notebook locally
 
 ```
-cd notebooks
-
-pip install -r requirements.txt
+pip install -r notebooks/requirements.txt
 jupyter-lab
 ```
 
