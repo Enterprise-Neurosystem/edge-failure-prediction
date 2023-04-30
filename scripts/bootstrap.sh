@@ -26,7 +26,7 @@ oc project ${NAMESPACE} || oc new-project ${NAMESPACE}
 }
 
 check_podman(){
-which podman || alias docker=podman
+which docker || alias docker=podman
 }
 
 is_sourced() {
