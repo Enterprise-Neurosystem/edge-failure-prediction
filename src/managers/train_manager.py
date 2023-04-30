@@ -2,7 +2,8 @@ import tensorflow as tf
 from tensorflow.keras.callbacks import LearningRateScheduler
 from dataprep.data_preparation import DataPreparation
 from model.lstm_model import LSTMModel
-import joblib
+
+# import joblib
 
 
 class TrainManager:
