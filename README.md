@@ -54,7 +54,7 @@ Setup local development
 
 Note: Python version 3.9+ may fail. replace `python3` with `python3.8` if needed.
 
-The following section only needs to be run once
+The following section only needs to be *run once*
 
 ```
 python3 -m venv venv
