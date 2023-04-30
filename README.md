@@ -32,6 +32,7 @@ You can view the default parameters for `bootstrap.sh` [here](scripts/bootstrap.
 
 export NAMESPACE=$(oc whoami)
 export DB_HOSTNAME="predict-db.edge-failure-prediction.svc.cluster.local"
+export KAFKA_HOSTNAME="kafka-cluster-kafka-bootstrap.edge-kafka.svc.cluster.local"
 ```
 
 ```

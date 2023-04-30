@@ -61,8 +61,9 @@ class KafkaDataService:
 
         # location of the Kafka Bootstrap Server loaded from the environment variable.
         # NOTE: Use the url below for use within the cluster
-        self.KAFKA_BOOTSTRAP_SERVER = (
-            "kafka-cluster-kafka-bootstrap.kafka-anomaly.svc.cluster.local"
+        self.KAFKA_BOOTSTRAP_SERVER = os.environ.get(
+            "KAFKA_HOSTNAME",
+            "kafka-cluster-kafka-bootstrap.edge-kafka.svc.cluster.local",
         )
         # TODO:  Use the url below for use outside the cluster
         # self.KAFKA_BOOTSTRAP_SERVER = 'kafka-cluster-kafka-bootstrap-kafka-anomaly.apps.ieee.8goc.p1.openshiftapps.com:443'

@@ -11,6 +11,9 @@ DB_DATABASE="${DB_DATABASE:-predict-db}"
 DB_USERNAME="${DB_USERNAME:-predict-db}"
 DB_PASSWORD="${DB_PASSWORD:-failureislame}"
 
+# setup kafka parameters
+KAFKA_HOSTNAME="${KAFKA_HOSTNAME:-kafka-cluster-kafka-bootstrap.edge-kafka.svc.cluster.local}"
+
 # other parameters
 GIT_BRANCH="workshop/updates"
 DB_PATH=database
@@ -83,10 +86,16 @@ oc new-app \
 # setup database parameters
 oc set env \
   deployment/${APP_NAME} \
+  -n ${NAMESPACE} \
   -e DB_HOSTNAME=${DB_HOSTNAME} \
   -e DB_DATABASE=${DB_DATABASE} \
   -e DB_USERNAME=${DB_USERNAME} \
   -e DB_PASSWORD=${DB_PASSWORD}
+
+oc set env \
+  deployment/${APP_NAME} \
+  -n ${NAMESPACE} \
+  -e KAFKA_HOSTNAME=${KAFKA_HOSTNAME}
 
 # create route
 oc expose service \
