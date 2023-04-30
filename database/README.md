@@ -10,7 +10,7 @@ Note: The container will automatically be removed when it is stopped
 # NOTICE: run from repo root dir
 
 . scripts/bootstrap.sh
-podman_setup_db
+container_setup_db
 ```
 
 ## Run postgres in OpenShift
