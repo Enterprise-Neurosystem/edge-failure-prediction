@@ -60,7 +60,7 @@ python3 -m venv venv
 pip install -r src/requirements.txt
 ```
 
-Run app locally
+Run local web app
 
 ```
 cd src
@@ -68,7 +68,7 @@ cd src
 python3 wsgi.py
 ```
 
-Run Jupyter Notebook locally
+Run local Jupyter Notebook
 
 ```
 pip install -r notebooks/requirements.txt
