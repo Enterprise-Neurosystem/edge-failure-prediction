@@ -46,6 +46,8 @@ You can modify the parameters as needed before running `bootstrap.sh`
 
 ```
 # workshop user parameters
+# note: run this if you are a workshop user before bootstrap.sh
+
 export NAMESPACE=$(oc whoami)
 export DB_HOSTNAME="predict-db.edge-failure-prediction.svc.cluster.local"
 ```
