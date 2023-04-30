@@ -2,11 +2,12 @@ import os
 import psycopg2
 from psycopg2 import pool
 
-db_host = os.environ.get('DB_HOST', 'localhost')
-db_port = os.environ.get('DB_PORT', '5432')
-db_user = os.environ.get('DB_USER', 'edge-db')
-db_password = os.environ.get('DB_PASSWORD', 'failure')
+db_hostname = os.environ.get('DB_HOSTNAME', 'localhost')
 db_database = os.environ.get('DB_DATABASE', 'edge-db')
+db_username = os.environ.get('DB_USERNAME', 'edge-db')
+db_password = os.environ.get('DB_PASSWORD', 'failure')
+db_port = os.environ.get('DB_PORT', '5432')
+
 
 class ConnectionPoolSingleton:
     """Singleton class that makes a pooled connection to a Postgres database"""
@@ -27,11 +28,11 @@ class ConnectionPoolSingleton:
             raise Exception("Cannot create more than one instance of this class")
         else:
             ConnectionPoolSingleton.__connection_pool = psycopg2.pool.ThreadedConnectionPool(1, 30,
-                                                 host=db_host,
-                                                 port=db_port,
-                                                 user=db_user,
+                                                 host=db_hostname,
+                                                 database=db_database,
+                                                 user=db_username,
                                                  password=db_password,
-                                                 database=db_database)
+                                                 port=db_port)
     @staticmethod
     def getConnectionPool():
         """Instantiates ConnectionPoolSingleton and returns a pooled connection"""

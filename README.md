@@ -36,13 +36,18 @@ Last tested with:
 - OS: mac,linux (various)
 - Podman 4.4.4
 
-## OpenShift Quickstart
+## OpenShift Setup
 
 ```
-# setup parameters
+# setup app parameters
 export APP_NAME=predict
 export NAMESPACE=edge-failure-prediction
-export SVC_NAME="${APP_NAME}.${NAMESPACE}.svc.cluster.local"
+
+# setup database parameters
+export DB_HOSTNAME="${APP_NAME}.${NAMESPACE}.svc.cluster.local"
+export DB_DATABASE="edge-db"
+export DB_USERNAME="edge-db"
+export DB_PASSWORD="failureislame"
 
 APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
 ```
@@ -60,6 +65,14 @@ oc new-app \
   -l ${APP_LABEL} \
   -n ${NAMESPACE} \
   --context-dir src
+
+# setup database parameters
+oc set env \
+  deployment/${APP_NAME} \
+  -e ${DB_HOSTNAME} \
+  -e ${DB_DATABASE} \
+  -e ${DB_USERNAME} \
+  -e ${DB_PASSWORD}
 
 # create route
 oc expose service \
