@@ -47,7 +47,7 @@ oc set env \
   deployment/${APP_NAME} \
   -n ${NAMESPACE} \
   -e POSTGRESQL_DATABASE=edge-db \
-  -e POSTGRESQL_PASSWORD=failure \
+  -e POSTGRESQL_PASSWORD=failureislame \
   -e POSTGRESQL_USER=edge-db
 
 # make db persistent
