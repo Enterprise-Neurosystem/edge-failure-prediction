@@ -54,19 +54,23 @@ Setup local development
 
 Note: Python version 3.9+ may fail. replace `python3` with `python3.8` if needed.
 
-`python3 -m venv venv` only needs to be run once. To activate the virtual env again run only  `venv/bin/activate`.
+`python3 -m venv venv` only needs to be run once.
 
 ```
-
+# run once
 python3 -m venv venv
 
+# reactivate your virtual env with the following
 . venv/bin/activate
+
+# run once
 pip install -r src/requirements.txt
 ```
 
 Run local web app
 
 ```
+# reactivate your virtual env with the following
 . venv/bin/activate
 
 cd src
