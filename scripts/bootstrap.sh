@@ -11,6 +11,7 @@ DB_HOSTNAME="${DB_HOSTNAME:-${APP_NAME}.${NAMESPACE}.svc.cluster.local}"
 DB_DATABASE="${DB_DATABASE:-predict-db}"
 DB_USERNAME="${DB_USERNAME:-predict-db}"
 DB_PASSWORD="${DB_PASSWORD:-failureislame}"
+DB_PATH=database
 
 APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
 
@@ -50,8 +51,8 @@ setup_db_data(){
 POD=$(oc get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
 
 echo "POD: ${POD}"
-oc -n "${NAMESPACE}" cp db.sql "${POD}":/tmp
-oc -n "${NAMESPACE}" cp sensor.csv.zip "${POD}":/tmp
+oc -n "${NAMESPACE}" cp "${DB_PATH}"/db.sql "${POD}":/tmp
+oc -n "${NAMESPACE}" cp "${DB_PATH}"/sensor.csv.zip "${POD}":/tmp
 
 oc -n "${NAMESPACE}" exec "${POD}" -- sh -c "$(cat -)" << COMMAND
 # you can run the following w/ oc rsh
