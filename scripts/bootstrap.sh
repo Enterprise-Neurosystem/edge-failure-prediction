@@ -19,14 +19,13 @@ GIT_BRANCH="workshop/updates"
 DB_PATH=database
 APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
 
+PODMAN_CMD=docker
+which podman && PODMAN_CMD=podman
+
 ocp_init(){
 oc whoami || exit 0
 # update openshift context to project
 oc project ${NAMESPACE} || oc new-project ${NAMESPACE}
-}
-
-check_podman(){
-which docker || alias docker=podman
 }
 
 is_sourced() {
@@ -158,11 +157,11 @@ oc annotate route \
 
 container_setup_db_instance(){
   # remove old container
-  docker stop "${DB_APP_NAME}"
+  ${PODMAN_CMD} stop "${DB_APP_NAME}"
   sleep 1
 
   # run db; remove on stop
-  docker run \
+  ${PODMAN_CMD} run \
     --name "${DB_APP_NAME}" \
     -d --rm \
     -p 5432:5432 \
@@ -173,7 +172,7 @@ container_setup_db_instance(){
     registry.redhat.io/rhel8/postgresql-12:latest
 
   # run db data setup
-  docker exec \
+  ${PODMAN_CMD} exec \
     -it \
     "${DB_APP_NAME}" \
     /bin/bash -c ". scripts/bootstrap.sh; container_setup_db_data"
