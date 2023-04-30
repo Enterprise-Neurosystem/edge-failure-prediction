@@ -7,8 +7,7 @@ Use the following to start a container for local development.
 Note: The container will automatically be removed when it is stopped
 
 ```
-# run from repo root
-# cd ..
+# NOTICE: run from repo root dir
 
 . scripts/bootstrap.sh
 podman_setup_db
@@ -17,8 +16,7 @@ podman_setup_db
 ## Run postgres in OpenShift
 
 ```
-# run from repo root
-# cd ..
+# NOTICE: run from repo root dir
 
 . scripts/bootstrap.sh
 ocp_setup_db

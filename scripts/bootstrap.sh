@@ -147,7 +147,7 @@ oc annotate route \
   --overwrite
 }
 
-podman_setup_db_instance(){
+container_setup_db_instance(){
   # remove old container
   docker stop "${DB_APP_NAME}"
   sleep 1
@@ -167,10 +167,10 @@ podman_setup_db_instance(){
   docker exec \
     -it \
     "${DB_APP_NAME}" \
-    /bin/bash -c ". scripts/bootstrap.sh; podman_setup_db_data"
+    /bin/bash -c ". scripts/bootstrap.sh; container_setup_db_data"
 }
 
-podman_setup_db_data(){
+container_setup_db_data(){
 cd database
 
 cp sensor.csv.zip db.sql /tmp
@@ -183,8 +183,8 @@ echo 'GRANT ALL ON TABLE waterpump TO "'"${DB_USERNAME}"'" ;' >> db.sql
 psql -d "${DB_APP_NAME}" -f db.sql
 }
 
-podman_setup_db(){
-podman_setup_db_instance
+container_setup_db(){
+container_setup_db_instance
 
 echo "To stop the container and clean up run:
   podman rm predict-db
