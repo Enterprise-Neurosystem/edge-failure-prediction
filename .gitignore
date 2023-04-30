@@ -1,9 +1,10 @@
 # Additions
 .idea/
-/scratch/
-/tests/
-/test/
-/static/cache/
+scratch
+tests
+test
+static/cache
+.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
