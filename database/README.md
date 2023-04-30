@@ -24,9 +24,7 @@ podman_setup_db
 ocp_setup_db
 ```
 
-Setup local port forwarding to database (localhost:5432) on OpenShift
-
-You can connect to your database in OpenShift via `localhost:5432` while this command is running
+You can connect to your OpenShift database via `localhost:5432` while the following `oc port-forward` command is running
 
 ```
 oc -n ${NAMESPACE} \
