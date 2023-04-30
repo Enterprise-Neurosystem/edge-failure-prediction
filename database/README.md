@@ -24,7 +24,7 @@ ocp_setup_db
 
 You can connect to your OpenShift database via `localhost:5432`
 while the following `oc port-forward` command is running.
-Update the parameters as appropriate
+Update the parameters as appropriate.
 
 ```
 DB_APP_NAME="predict-db"
