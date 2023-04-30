@@ -20,7 +20,7 @@ init(){
 oc project ${NAMESPACE} || oc new-project ${NAMESPACE}
 }
 
-setup_db(){
+setup_db_instance(){
 # setup postgres
 oc new-app \
   --name ${DB_APP_NAME} \
@@ -102,7 +102,25 @@ oc annotate route \
   --overwrite
 }
 
+setup_db(){
+  echo "If you are participating in a workshop answer NO."
+  read -r -p "Setup sensor data database? [y/N] " input
+  case $input in
+    [yY][eE][sS]|[yY])
+      setup_db
+      setup_db_data
+      ;;
+    [nN][oO]|[nN])
+      echo
+      ;;
+    *)
+      echo
+      ;;
+  esac
+  setup_db_instance
+  setup_db_data
+}
+
 init
-# setup_db
-# setup_db_data
+setup_db
 setup_app
