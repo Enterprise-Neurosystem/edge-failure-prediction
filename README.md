@@ -65,31 +65,26 @@ oc new-app \
 Setup local postgres db
 
 ```
-
 cd edge-db
 
 . ./setup.sh
 setup_container
 
 cd ..
-
 ```
 
 Setup local development
 
 ```
-
 cd src
 
 python3 -m venv venv
 . venv/bin/activate
 pip install -r src/requirements.txt
-
 ```
 
 Run app locally
 
 ```
-
 python3 wsgi.py
 ```
