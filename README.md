@@ -48,7 +48,7 @@ APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
 ```
 
 ```
-# Update context to project
+# update openshift context to project
 oc project ${NAMESPACE} || oc new-project ${NAMESPACE}
 ```
 
