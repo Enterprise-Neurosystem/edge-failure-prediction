@@ -25,6 +25,10 @@ oc whoami || exit 0
 oc project ${NAMESPACE} || oc new-project ${NAMESPACE}
 }
 
+check_podman(){
+which podman || alias docker=podman
+}
+
 is_sourced() {
   if [ -n "$ZSH_VERSION" ]; then
       case $ZSH_EVAL_CONTEXT in *:file:*) return 0;; esac
