@@ -64,6 +64,15 @@ cd src
 python3 wsgi.py
 ```
 
+Setup Jupyter notebook locally
+
+```
+cd notebooks
+
+pip install -r requirements.txt
+jupyter-lab
+```
+
 ## Acknowledgements
 
 Data preparation to train the model is an adaptation the work done by Xiaxiau: [here](https://www.kaggle.com/code/xiaxiaxu/predictmachinefailureinadvance/notebook)
