@@ -24,11 +24,11 @@ ocp_setup_db
 
 You can connect to your OpenShift database via `localhost:5432`
 while the following `oc port-forward` command is running.
-Update the (export) parameters as appropriate
+Update the parameters as appropriate
 
 ```
-export DB_APP_NAME="predict-db"
-export NAMESPACE="$(oc project)"
+DB_APP_NAME="predict-db"
+NAMESPACE="$(oc project)"
 
 oc -n ${NAMESPACE} \
   port-forward \
