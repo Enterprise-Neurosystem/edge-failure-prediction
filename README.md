@@ -1,6 +1,6 @@
 # Failure Prediction App
 
-This web app is was written to serve the needs of a hands on workshop where much of the data preparation work is automated and is in read only form.
+This web app was written to serve the needs of a hands-on workshop. Much of the data preparation work is automated and is read only.
 
 The source data was downloaded as a csv and is served via a PostgreSQL database. The prediction feature can use one of two data sources.
 
