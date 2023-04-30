@@ -70,7 +70,7 @@ cd src
 python3 wsgi.py
 ```
 
-Setup Jupyter notebook locally
+Run Jupyter Notebook locally
 
 ```
 pip install -r notebooks/requirements.txt
