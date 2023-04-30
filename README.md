@@ -36,6 +36,10 @@ Last tested with:
 - OS: mac,linux (various)
 - Podman 4.4.4
 
+## Workshop
+
+You can find the workshop instructions [here](docs/instructions.md).
+
 ## OpenShift Setup
 
 You can modify the parameters as needed before running `bootstrap.sh`
