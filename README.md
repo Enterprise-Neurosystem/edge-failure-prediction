@@ -46,7 +46,7 @@ scripts/bootstrap.sh
 Setup local postgres container
 
 ```
-. ./bootstrap.sh
+. scripts/bootstrap.sh
 container_setup_db
 ```
 
