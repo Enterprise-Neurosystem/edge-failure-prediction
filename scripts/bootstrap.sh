@@ -3,7 +3,6 @@
 # setup app parameters
 APP_NAME="${APP_NAME:-predict}"
 NAMESPACE="${NAMESPACE:-edge-failure-prediction}"
-GIT_BRANCH="workshop/updates"
 
 # setup database parameters
 DB_APP_NAME="${DB_APP_NAME:-predict-db}"
@@ -11,8 +10,10 @@ DB_HOSTNAME="${DB_HOSTNAME:-${DB_APP_NAME}.${NAMESPACE}.svc.cluster.local}"
 DB_DATABASE="${DB_DATABASE:-predict-db}"
 DB_USERNAME="${DB_USERNAME:-predict-db}"
 DB_PASSWORD="${DB_PASSWORD:-failureislame}"
-DB_PATH=database
 
+# other parameters
+GIT_BRANCH="workshop/updates"
+DB_PATH=database
 APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
 
 init(){
@@ -102,23 +103,29 @@ oc annotate route \
   --overwrite
 }
 
+print_db_info(){
+# print db hostname for workshop
+echo "The web app requires a running postgres db to function"
+echo "The following is the hostame is for the database inside OpenShift"
+echo "DB_HOSTNAME: ${DB_HOSTNAME}"
+}
+
 setup_db(){
-  echo "If you are participating in a workshop answer NO."
-  read -r -p "Setup sensor data database? [y/N] " input
-  case $input in
-    [yY][eE][sS]|[yY])
-      setup_db
-      setup_db_data
-      ;;
-    [nN][oO]|[nN])
-      echo
-      ;;
-    *)
-      echo
-      ;;
-  esac
-  setup_db_instance
-  setup_db_data
+echo "The safe answer is: NO"
+read -r -p "Setup sensor data database? [y/N] " input
+case $input in
+  [yY][eE][sS]|[yY])
+    setup_db_instance
+    setup_db_data
+    print_db_info
+    ;;
+  [nN][oO]|[nN])
+    echo
+    ;;
+  *)
+    echo
+    ;;
+esac
 }
 
 init

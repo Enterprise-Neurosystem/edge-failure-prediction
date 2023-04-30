@@ -11,6 +11,7 @@ class DataSourceManager:
             comment out line 39 and uncomment line 37
 
     """
+
     @staticmethod
     def csv_line_reader(file_name):
         """Use data from a csv to periodically yield a row of data
@@ -20,10 +21,10 @@ class DataSourceManager:
         ..notes:: This static method has no return.  Instead, it yields a row of data that has been read from
         a data source.  The row is yielded as a dictionary
         """
-        with open(file_name, 'r') as read_obj:
+        with open(file_name, "r") as read_obj:
             dict_reader = DictReader(read_obj)
             for row in dict_reader:
-                #print("row in reader: {}".format(row))
+                # print("row in reader: {}".format(row))
                 time.sleep(1 / 10)
                 yield row
 
@@ -34,7 +35,7 @@ class DataSourceManager:
         """
         kafka_data_service = KafkaDataService()
         # TODO: The code below is for use when consumer is external to the cluster
-        #consumer = kafka_data_service.get_Kafka_consumer_external()
+        # consumer = kafka_data_service.get_Kafka_consumer_external()
         # TODO: The code belos is for use when consumer is inside cluster
         consumer = kafka_data_service.get_Kafka_consumer()
 

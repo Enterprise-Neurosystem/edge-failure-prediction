@@ -32,5 +32,7 @@ setup_db(){
   cd /tmp
 
   unzip -o sensor.csv.zip
+  
+  echo 'GRANT ALL ON TABLE waterpump TO "'"${DB_USERNAME}"'" ;' >> db.sql
   psql -d "${DB_APP_NAME}" -f db.sql
 }

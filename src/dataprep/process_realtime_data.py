@@ -7,14 +7,21 @@ import pandas as pd
 import numpy as np
 
 
-
 class ProcessRealtimeData:
-    """Class used to process, predict and yield plotting data for one point
+    """Class used to process, predict and yield plotting data for one point"""
 
-    """
-    def __init__(self, predict_window_size, scaler_filename, pca_filename,
-                 means_filename, bad_cols_filename, model_filename, data_source,
-                 csv_filename=None, group_id=None):
+    def __init__(
+        self,
+        predict_window_size,
+        scaler_filename,
+        pca_filename,
+        means_filename,
+        bad_cols_filename,
+        model_filename,
+        data_source,
+        csv_filename=None,
+        group_id=None,
+    ):
         """Class initializer (Constructor)
 
         Just so that the model does not have to be retrained each time we want to make a prediction,
@@ -40,8 +47,10 @@ class ProcessRealtimeData:
         self.csv_filename = csv_filename
         self.group_id = group_id
         self.data_source = data_source
-        self.prediction_buff = []  # This buffer will be a list of DataFrames, where each row of predict data is a
-                                    # Dataframe
+        self.prediction_buff = (
+            []
+        )  # This buffer will be a list of DataFrames, where each row of predict data is a
+        # Dataframe
         self.row_counter = 0
         self.scaler = self.load_scaler(scaler_filename)
         self.pca = self.load_pca(pca_filename)
@@ -64,8 +73,8 @@ class ProcessRealtimeData:
         return joblib.load(means_filename)
 
     def load_model(self, model_filename):
-        #return joblib.load(model_filename)
-        return LSTMModel.load_model('static/cache/trained_model')
+        # return joblib.load(model_filename)
+        return LSTMModel.load_model("static/cache/trained_model")
 
     def process_points(self):
         """Process one point from the prediction data
@@ -83,9 +92,9 @@ class ProcessRealtimeData:
         # gen is a generator that is an iterable of dictionaries. Each dictionary contains one row of prediction data
         # including timestamp and sensor data
         gen = None
-        if self.data_source == 'csv':
+        if self.data_source == "csv":
             gen = DataSourceManager.csv_line_reader(self.csv_filename)
-        elif self.data_source == 'kafka':
+        elif self.data_source == "kafka":
             gen = DataSourceManager.get_kafka_data(self.group_id)
         while True:
             row = next(gen, None)  # Get next row where row is a dictionary
@@ -95,24 +104,27 @@ class ProcessRealtimeData:
                 yield "event: jobfinished\ndata: " + "none" + "\n\n"
                 break  # Terminate this event loop
             else:
-            # Convert row dictionary to DataFrame
+                # Convert row dictionary to DataFrame
                 row_as_df = pd.DataFrame(row, index=[0])
                 # Set the timestamp values of the prediction window's start and end
-                predict_window_end = \
-                    pd.to_datetime(row_as_df['timestamp'][0])  # Newest time
-                predict_window_start = \
-                    pd.to_datetime(predict_window_end - pd.Timedelta(seconds=60*(2 * self.predict_window_size - 1)))
+                predict_window_end = pd.to_datetime(
+                    row_as_df["timestamp"][0]
+                )  # Newest time
+                predict_window_start = pd.to_datetime(
+                    predict_window_end
+                    - pd.Timedelta(seconds=60 * (2 * self.predict_window_size - 1))
+                )
                 # df has index of timestamp
-                row_as_df.set_index('timestamp', inplace=True)
+                row_as_df.set_index("timestamp", inplace=True)
                 # Drop bad columns
                 DataPreparation.drop_bad_cols(row_as_df, self.bad_cols)
                 # First replace any empty values with NaN
-                row_as_df = row_as_df.replace(r'^\s*$', np.nan, regex=True)
+                row_as_df = row_as_df.replace(r"^\s*$", np.nan, regex=True)
                 # Replace any nan with mean for that column that was obtained when model was trained
                 row_as_df.fillna(value=self.means, inplace=True)
 
                 # Drop col 'machine_status'
-                row_as_df.drop('machine_status', axis=1, inplace=True)
+                row_as_df.drop("machine_status", axis=1, inplace=True)
 
                 # Transform with self.scaler.
                 # scaled_data is a numpy array
@@ -120,13 +132,14 @@ class ProcessRealtimeData:
                 # Number of featured (PC's) that were determined when the training data was transformed by the PCA
                 num_features = self.pca.n_components_
                 # Add 'alarm' col
-                row_as_df['alarm'] = 0
+                row_as_df["alarm"] = 0
                 # Add 'machine_status' temporarily since DataPreparation.transform_df_by_pca expects that column
-                row_as_df['machine_status'] = 0
+                row_as_df["machine_status"] = 0
                 # Transform current data point with self.pca.  The resulting df has the same index as the row_as_df.
-                df_row_transformed = DataPreparation.transform_df_by_pca(self.pca, row_as_df,
-                                                                      scaled_data, num_features)
-                row_as_df.drop('machine_status', axis=1, inplace=True)
+                df_row_transformed = DataPreparation.transform_df_by_pca(
+                    self.pca, row_as_df, scaled_data, num_features
+                )
+                row_as_df.drop("machine_status", axis=1, inplace=True)
                 # TODO:  Currently plotting using PC's.  If we want to plot raw sensor data, separate raw sensor data
                 #  in row to be used for plotting.
                 # Use the pca_transformed data for prediction.
@@ -139,29 +152,37 @@ class ProcessRealtimeData:
                     # Keep prediction_buffsize  as 2  * predict_window_size by popping oldest point from buffer
                     self.prediction_buff.pop(0)
                     # convert buffer into df by concat list of df's in buffer
-                    buff_df = pd.concat(self.prediction_buff) # has timestamp index and 'alarm' col
+                    buff_df = pd.concat(
+                        self.prediction_buff
+                    )  # has timestamp index and 'alarm' col
                     # Convert buff_df index to datetime so the index will be compatible with loc[]
                     buff_df.index = pd.to_datetime(buff_df.index)
-                    df_predict_window = buff_df.loc[predict_window_start:predict_window_end]
+                    df_predict_window = buff_df.loc[
+                        predict_window_start:predict_window_end
+                    ]
 
                     # Prepare the data in the buffer so that it can be used in the LSTM model for prediction
-                    X, y = DataPreparation.make_predict_data(df_predict_window, feature_names,
-                                                      self.predict_window_size)
+                    X, y = DataPreparation.make_predict_data(
+                        df_predict_window, feature_names, self.predict_window_size
+                    )
                     # Get prediction as array with length = self.predict_window_size
                     y_predict = self.model.predict(X).flatten()
                     # Get the last element of the y_predict list for plotting.  Last element in y_predict
                     # is the most current point which makes it the prediction point.
-                    #json_data = self.__create_dict(df_predict_window, True, alarm_value=y_predict[19])
-                    #json_data = self.__create_dict(df_predict_window, True, alarm_value=y_predict[self.predict_window_size - 1])
-                    json_data = self.__create_dict(df_predict_window.iloc[-1:], True,
-                                                   alarm_value=y_predict[self.predict_window_size - 1])
+                    # json_data = self.__create_dict(df_predict_window, True, alarm_value=y_predict[19])
+                    # json_data = self.__create_dict(df_predict_window, True, alarm_value=y_predict[self.predict_window_size - 1])
+                    json_data = self.__create_dict(
+                        df_predict_window.iloc[-1:],
+                        True,
+                        alarm_value=y_predict[self.predict_window_size - 1],
+                    )
                     self.row_counter += 1
-                    #print("Buff full: {}".format(json_data))
+                    # print("Buff full: {}".format(json_data))
                     yield "event: update\ndata: " + json.dumps(json_data) + "\n\n"
-                else: # buffer not yet filled, just plot sensor data with no prediction
+                else:  # buffer not yet filled, just plot sensor data with no prediction
                     self.row_counter += 1
                     json_data = self.__create_dict(df_row_transformed, False)
-                    #print("Buff NOT full: {}".format(json_data))
+                    # print("Buff NOT full: {}".format(json_data))
                     yield "event: update\ndata: " + json.dumps(json_data) + "\n\n"
 
     def __create_dict(self, one_row_df, alarm, alarm_value=None):
@@ -182,10 +203,9 @@ class ProcessRealtimeData:
         else:
             alarm_val = 0
         plot_dict = {
-            'timestamp': str(one_row_df.index[0]),
-            'pc1': one_row_df['pc1'].values[0],
-            'pc2': one_row_df['pc2'].values[0],
-            'alarm': str(alarm_val)
+            "timestamp": str(one_row_df.index[0]),
+            "pc1": one_row_df["pc1"].values[0],
+            "pc2": one_row_df["pc2"].values[0],
+            "alarm": str(alarm_val),
         }
         return plot_dict
-

@@ -16,7 +16,7 @@ class DataFileManager:
         :type: list
         """
         file_names = []
-        for(dirpath, dirnames, filenames) in walk(path):
+        for dirpath, dirnames, filenames in walk(path):
             file_names.extend(filenames)
             break  # Stop after first directory has been found and do not walk any deeper
         return file_names
