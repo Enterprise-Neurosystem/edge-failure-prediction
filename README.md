@@ -59,7 +59,7 @@ scripts/bootstrap.sh
 Setup local postgres db
 
 ```
-cd edge-db
+cd database
 
 . ./setup.sh
 setup_container
