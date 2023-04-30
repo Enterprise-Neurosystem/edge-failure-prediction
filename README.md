@@ -38,22 +38,16 @@ Last tested with:
 
 ## Workshop
 
-You can find the workshop instructions [here](docs/instructions.md).
+You can find the workshop instructions [here](docs/instructions.md)
 
 ## OpenShift Setup
 
 You can modify the parameters as needed before running `bootstrap.sh`
 
 ```
-# default app parameters
-export APP_NAME=predict
-export NAMESPACE=edge-failure-prediction
-
-# default database parameters
-export DB_HOSTNAME="${APP_NAME}.${NAMESPACE}.svc.cluster.local"
-export DB_DATABASE="edge-db"
-export DB_USERNAME="edge-db"
-export DB_PASSWORD="failureislame"
+# workshop user parameters
+export NAMESPACE=$(oc whoami)
+export DB_HOSTNAME="predict-db.edge-failure-prediction.svc.cluster.local"
 ```
 
 ```
