@@ -36,7 +36,7 @@ oc set env \
 
 # make db persistent
 oc set volume \
-  deployment/${APP_NAME} \
+  deployment/${DB_APP_NAME} \
   --add \
   --name=${DB_APP_NAME} \
   --mount-path=/var/lib/postgresql/data \
@@ -45,10 +45,29 @@ oc set volume \
   --overwrite
 }
 
+setup_db_data(){
+POD=$(oc get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
+
+echo "POD: ${POD}"
+oc -n "${NAMESPACE}" cp db.sql "${POD}":/tmp
+oc -n "${NAMESPACE}" cp sensor.csv.zip "${POD}":/tmp
+
+oc -n "${NAMESPACE}" exec "${POD}" -- sh -c "$(cat -)" << COMMAND
+# you can run the following w/ oc rsh
+# this hack just saves you time
+
+cd /tmp
+# curl url.zip > sensor.csv.zip
+unzip -o sensor.csv.zip
+psql -d edge-db -f db.sql
+
+COMMAND
+}
+
 setup_app(){
 # setup prediction app
 oc new-app \
-  https://github.com/Enterprise-Neurosystem/edge-failure-prediction.git \
+  https://github.com/Enterprise-Neurosystem/edge-failure-prediction.git#workshop/updates \
   --name ${APP_NAME} \
   -l ${APP_LABEL} \
   -n ${NAMESPACE} \
@@ -68,25 +87,6 @@ oc expose service \
   -n ${NAMESPACE} \
   -l ${APP_LABEL} \
   --overrides='{"spec":{"tls":{"termination":"edge"}}}'
-}
-
-setup_db_data(){
-POD=$(oc get pod -l deployment="${APP_NAME}" -o name | sed 's#pod/##')
-
-echo "POD: ${POD}"
-oc -n "${NAMESPACE}" cp db.sql "${POD}":/tmp
-oc -n "${NAMESPACE}" cp sensor.csv.zip "${POD}":/tmp
-
-oc -n "${NAMESPACE}" exec "${POD}" -- sh -c "$(cat -)" << COMMAND
-# you can run the following w/ oc rsh
-# this hack just saves you time
-
-cd /tmp
-# curl url.zip > sensor.csv.zip
-unzip -o sensor.csv.zip
-psql -d edge-db -f db.sql
-
-COMMAND
 }
 
 init
