@@ -54,6 +54,8 @@ Setup local development
 
 ```
 # note: python3.9+ may fail
+# note: replace python3 w python3.8 if needed
+# note: virtual env command only needs to be run once
 python3 -m venv venv
 
 . venv/bin/activate
@@ -63,6 +65,8 @@ pip install -r src/requirements.txt
 Run local web app
 
 ```
+. venv/bin/activate
+
 cd src
 
 python3 wsgi.py
