@@ -2,6 +2,11 @@
 
 This web app is was written to serve the needs of a hands on workshop where much of the data preparation work is automated and is in read only form.
 
+The source data was downloaded as a csv and is served via a PostgreSQL database. The prediction feature can use one of two data sources.
+
+- `csv files` that contain prediction data with 720 data points
+- `Apache Kafka` which simulates data as it would be streamed from sensors
+
 ## Prerequisites
 
 Last tested with:
@@ -76,11 +81,6 @@ jupyter-lab
 Data preparation to train the model is an adaptation the work done by Xiaxiau: [here](https://www.kaggle.com/code/xiaxiaxu/predictmachinefailureinadvance/notebook)
 
 Source of the data used in this application is found: [here](https://www.kaggle.com/datasets/nphantawee/pump-sensor-data)
-
-The source data was downloaded as a csv and is served via a PostgreSQL database. The prediction feature can use one of two data sources.
-
-- `csv files` that contain prediction data with 720 data points
-- `Apache Kafka` which simulates data as it would be streamed from sensors
 
 ## Future Improvements
 
