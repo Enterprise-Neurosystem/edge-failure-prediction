@@ -19,12 +19,22 @@ GIT_BRANCH="workshop/updates"
 DB_PATH=database
 APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
 
-init(){
+ocp_init(){
+oc whoami || exit 0
 # update openshift context to project
 oc project ${NAMESPACE} || oc new-project ${NAMESPACE}
 }
 
-setup_db_instance(){
+is_sourced() {
+  if [ -n "$ZSH_VERSION" ]; then
+      case $ZSH_EVAL_CONTEXT in *:file:*) return 0;; esac
+  else  # Add additional POSIX-compatible shell names here, if needed.
+      case ${0##*/} in dash|-dash|bash|-bash|ksh|-ksh|sh|-sh) return 0;; esac
+  fi
+  return 1  # NOT sourced.
+}
+
+ocp_setup_db_instance(){
 # setup postgres
 oc new-app \
   --name ${DB_APP_NAME} \
@@ -52,13 +62,13 @@ oc set volume \
   --overwrite
 }
 
-setup_db_data(){
+ocp_setup_db_data(){
 POD=$(oc get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
 
 echo "copying data to database container..."
 echo "POD: ${POD}"
-# oc -n "${NAMESPACE}" cp "${DB_PATH}"/db.sql "${POD}":/tmp
-# oc -n "${NAMESPACE}" cp "${DB_PATH}"/sensor.csv.zip "${POD}":/tmp
+oc -n "${NAMESPACE}" cp "${DB_PATH}"/db.sql "${POD}":/tmp
+oc -n "${NAMESPACE}" cp "${DB_PATH}"/sensor.csv.zip "${POD}":/tmp
 
 cat << COMMAND | oc -n "${NAMESPACE}" exec "${POD}" -- sh -c "$(cat -)"
 # you can run the following w/ oc rsh
@@ -74,7 +84,32 @@ psql -d $DB_DATABASE -f db.sql
 COMMAND
 }
 
-setup_app(){
+ocp_print_db_info(){
+# print db hostname for workshop
+echo "The web app requires a running postgres db to function"
+echo "The following is the hostame is for the database inside OpenShift"
+echo "DB_HOSTNAME: ${DB_HOSTNAME}"
+}
+
+ocp_setup_db(){
+echo "The safe answer is: NO"
+read -r -p "Setup sensor database in OpenShift? [y/N] " input
+case $input in
+  [yY][eE][sS]|[yY])
+    ocp_setup_db_instance
+    ocp_setup_db_data
+    ocp_print_db_info
+    ;;
+  [nN][oO]|[nN])
+    echo
+    ;;
+  *)
+    echo
+    ;;
+esac
+}
+
+ocp_setup_app(){
 # setup prediction app
 oc new-app \
   https://github.com/Enterprise-Neurosystem/edge-failure-prediction.git#${GIT_BRANCH} \
@@ -112,31 +147,54 @@ oc annotate route \
   --overwrite
 }
 
-print_db_info(){
-# print db hostname for workshop
-echo "The web app requires a running postgres db to function"
-echo "The following is the hostame is for the database inside OpenShift"
-echo "DB_HOSTNAME: ${DB_HOSTNAME}"
+podman_setup_db_instance(){
+  # remove old container
+  docker stop "${DB_APP_NAME}"
+  sleep 1
+
+  # run db; remove on stop
+  docker run \
+    --name "${DB_APP_NAME}" \
+    -d --rm \
+    -p 5432:5432 \
+    -v $(pwd):/opt/app-root/src \
+    -e POSTGRESQL_DATABASE="${DB_DATABASE}" \
+    -e POSTGRESQL_PASSWORD="${DB_PASSWORD}" \
+    -e POSTGRESQL_USER="${DB_USERNAME}" \
+    registry.redhat.io/rhel8/postgresql-12:latest
+
+  # run db data setup
+  docker exec \
+    -it \
+    "${DB_APP_NAME}" \
+    /bin/bash -c ". scripts/bootstrap.sh; podman_setup_db_data"
 }
 
-setup_db(){
-echo "The safe answer is: NO"
-read -r -p "Setup sensor data database? [y/N] " input
-case $input in
-  [yY][eE][sS]|[yY])
-    setup_db_instance
-    setup_db_data
-    print_db_info
-    ;;
-  [nN][oO]|[nN])
-    echo
-    ;;
-  *)
-    echo
-    ;;
-esac
+podman_setup_db_data(){
+cd database
+
+cp sensor.csv.zip db.sql /tmp
+
+cd /tmp
+
+unzip -o sensor.csv.zip
+
+echo 'GRANT ALL ON TABLE waterpump TO "'"${DB_USERNAME}"'" ;' >> db.sql
+psql -d "${DB_APP_NAME}" -f db.sql
 }
 
-init
-setup_db
-setup_app
+podman_setup_db(){
+podman_setup_db_instance
+
+echo "To stop the container and clean up run:
+  podman rm predict-db
+"
+}
+
+main(){
+ocp_init
+ocp_setup_db
+ocp_setup_app
+}
+
+is_sourced || main
