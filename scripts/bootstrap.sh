@@ -65,6 +65,11 @@ oc set volume \
 ocp_setup_db_data(){
 POD=$(oc get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
 
+oc wait \
+  pod/${POD} \
+  -n ${NAMESPACE} \
+  --for=condition=Ready
+
 echo "copying data to database container..."
 echo "POD: ${POD}"
 oc -n "${NAMESPACE}" cp "${DB_PATH}"/db.sql "${POD}":/tmp
