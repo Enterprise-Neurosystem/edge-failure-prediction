@@ -52,10 +52,9 @@ setup_db_data(){
 POD=$(oc get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
 
 echo "copying data to database container..."
-
 echo "POD: ${POD}"
-oc -n "${NAMESPACE}" cp "${DB_PATH}"/db.sql "${POD}":/tmp
-oc -n "${NAMESPACE}" cp "${DB_PATH}"/sensor.csv.zip "${POD}":/tmp
+# oc -n "${NAMESPACE}" cp "${DB_PATH}"/db.sql "${POD}":/tmp
+# oc -n "${NAMESPACE}" cp "${DB_PATH}"/sensor.csv.zip "${POD}":/tmp
 
 cat << COMMAND | oc -n "${NAMESPACE}" exec "${POD}" -- sh -c "$(cat -)"
 # you can run the following w/ oc rsh
@@ -64,6 +63,8 @@ cat << COMMAND | oc -n "${NAMESPACE}" exec "${POD}" -- sh -c "$(cat -)"
 cd /tmp
 # curl url.zip > sensor.csv.zip
 unzip -o sensor.csv.zip
+
+echo 'GRANT ALL ON TABLE waterpump TO "'"${DB_USERNAME}"'" ;' >> db.sql
 psql -d $DB_DATABASE -f db.sql
 
 COMMAND
@@ -92,9 +93,16 @@ oc expose service \
   -n ${NAMESPACE} \
   -l ${APP_LABEL} \
   --overrides='{"spec":{"tls":{"termination":"edge"}}}'
+
+# kludge - fix timeout for app
+oc annotate route \
+  ${APP_NAME} \
+  -n ${NAMESPACE} \
+  haproxy.router.openshift.io/timeout=5m \
+  --overwrite
 }
 
 init
 # setup_db
-setup_db_data
-# setup_app
+# setup_db_data
+setup_app

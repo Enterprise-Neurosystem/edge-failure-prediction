@@ -57,11 +57,10 @@ CREATE TABLE waterpump
     sensor_51 DOUBLE PRECISION,
     machine_status TEXT);
 
-GRANT ALL ON TABLE public.waterpump TO "edge-db";
-
 COPY waterpump
     FROM '/tmp/sensor.csv'
     WITH CSV HEADER DELIMITER ',' ;
 
 ALTER TABLE waterpump
     DROP COLUMN id ;
+

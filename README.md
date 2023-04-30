@@ -38,12 +38,14 @@ Last tested with:
 
 ## OpenShift Setup
 
+You can modify the parameters as needed before running `bootstrap.sh`
+
 ```
-# setup app parameters
+# default app parameters
 export APP_NAME=predict
 export NAMESPACE=edge-failure-prediction
 
-# setup database parameters
+# default database parameters
 export DB_HOSTNAME="${APP_NAME}.${NAMESPACE}.svc.cluster.local"
 export DB_DATABASE="edge-db"
 export DB_USERNAME="edge-db"
