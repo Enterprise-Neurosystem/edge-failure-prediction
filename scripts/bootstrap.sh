@@ -3,6 +3,7 @@
 # setup app parameters
 APP_NAME="${APP_NAME:-predict}"
 NAMESPACE="${NAMESPACE:-edge-failure-prediction}"
+GIT_BRANCH="workshop/updates"
 
 # setup database parameters
 DB_APP_NAME=${DB_APP_NAME:-predict-db}
@@ -67,7 +68,7 @@ COMMAND
 setup_app(){
 # setup prediction app
 oc new-app \
-  https://github.com/Enterprise-Neurosystem/edge-failure-prediction.git#workshop/updates \
+  https://github.com/Enterprise-Neurosystem/edge-failure-prediction.git#${GIT_BRANCH} \
   --name ${APP_NAME} \
   -l ${APP_LABEL} \
   -n ${NAMESPACE} \

@@ -51,6 +51,7 @@ export DB_PASSWORD="failureislame"
 ```
 
 ```
+scripts/bootstrap.sh
 ```
 
 ## Local Quickstart
