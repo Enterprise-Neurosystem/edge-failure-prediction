@@ -25,6 +25,7 @@ You can find the workshop instructions [here](docs/instructions.md)
 ## OpenShift Setup
 
 You can view the default parameters for `bootstrap.sh` [here](scripts/bootstrap.sh).
+
 For more info about interacting with the database in OpenShift look [here](database/README.md)
 
 ```
