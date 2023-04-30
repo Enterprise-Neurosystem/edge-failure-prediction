@@ -1,4 +1,4 @@
-# edge-db
+# Database Info
 
 ## Run postgres as a container locally w/ podman (docker)
 
