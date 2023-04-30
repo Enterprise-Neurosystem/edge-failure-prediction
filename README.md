@@ -39,14 +39,17 @@ Last tested with:
 ## OpenShift Quickstart
 
 ```
+# setup parameters
 export APP_NAME=prediction
 export NAMESPACE=edge-failure-prediction
-export SVC_NAME="${APP_NAME}.${NAMESPACE}.svc.cluster.local
+export SVC_NAME="${APP_NAME}.${NAMESPACE}.svc.cluster.local"
 
 APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
+```
 
-# new project
-oc new-project ${NAMESPACE}
+```
+# Update context to project
+oc project ${NAMESPACE} || oc new-project ${NAMESPACE}
 ```
 
 ```
@@ -54,8 +57,7 @@ oc new-app \
   https://github.com/Enterprise-Neurosystem/edge-failure-prediction.git \
   --name ${APP_NAME} \
   -l ${APP_LABEL} \
-  -n ${NAMESPACE} \
-  ${CONTAINER_IMAGE}
+  -n ${NAMESPACE}
 ```
 
 ## Local Quickstart

@@ -23,7 +23,7 @@ Note: Modify the (export) env vars below to fit your needs
 ```
 export APP_NAME=edge-db
 export NAMESPACE=edge-failure-prediction
-export SVC_NAME="${APP_NAME}.${NAMESPACE}.svc.cluster.local
+export SVC_NAME="${APP_NAME}.${NAMESPACE}.svc.cluster.local"
 
 APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
 
