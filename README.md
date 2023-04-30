@@ -52,10 +52,12 @@ container_setup_db
 
 Setup local development
 
+Note: Python version 3.9+ may fail. replace `python3` with `python3.8` if needed.
+
+`python3 -m venv venv` only needs to be run once. To activate the virtual env again run only  `venv/bin/activate`.
+
 ```
-# note: python3.9+ may fail
-# note: replace python3 w python3.8 if needed
-# note: virtual env command only needs to be run once
+
 python3 -m venv venv
 
 . venv/bin/activate
