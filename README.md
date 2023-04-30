@@ -34,32 +34,60 @@ Last tested with:
 - OpenShift 4.10
 - Shell: bash
 - OS: mac,linux (various)
+- Podman 4.4.4
 
-## Quickstart
+## OpenShift Quickstart
+
+```
+export APP_NAME=prediction
+export NAMESPACE=edge-failure-prediction
+export SVC_NAME="${APP_NAME}.${NAMESPACE}.svc.cluster.local
+
+APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
+
+# new project
+oc new-project ${NAMESPACE}
+```
+
+```
+oc new-app \
+  https://github.com/Enterprise-Neurosystem/edge-failure-prediction.git \
+  --name ${APP_NAME} \
+  -l ${APP_LABEL} \
+  -n ${NAMESPACE} \
+  ${CONTAINER_IMAGE}
+```
+
+## Local Quickstart
 
 Setup local postgres db
 
 ```
+
 cd edge-db
 
 . ./setup.sh
 setup_container
 
 cd ..
+
 ```
 
 Setup local development
 
 ```
+
 cd src
 
 python3 -m venv venv
 . venv/bin/activate
 pip install -r src/requirements.txt
+
 ```
 
 Run app locally
 
 ```
+
 python3 wsgi.py
 ```
