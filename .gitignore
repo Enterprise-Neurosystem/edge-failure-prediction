@@ -3,7 +3,7 @@
 scratch
 tests
 test
-static/cache
+src/static/cache
 .DS_Store
 
 # Byte-compiled / optimized / DLL files
