@@ -40,7 +40,7 @@ Last tested with:
 
 ```
 # setup parameters
-export APP_NAME=prediction
+export APP_NAME=predict
 export NAMESPACE=edge-failure-prediction
 export SVC_NAME="${APP_NAME}.${NAMESPACE}.svc.cluster.local"
 
@@ -53,11 +53,20 @@ oc project ${NAMESPACE} || oc new-project ${NAMESPACE}
 ```
 
 ```
+# setup prediction app
 oc new-app \
   https://github.com/Enterprise-Neurosystem/edge-failure-prediction.git \
   --name ${APP_NAME} \
   -l ${APP_LABEL} \
-  -n ${NAMESPACE}
+  -n ${NAMESPACE} \
+  --context-dir src
+
+# create route
+oc expose service \
+  ${APP_NAME} \
+  -n ${NAMESPACE} \
+  -l ${APP_LABEL} \
+  --overrides='{"spec":{"tls":{"termination":"edge"}}}'
 ```
 
 ## Local Quickstart
