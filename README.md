@@ -48,38 +48,9 @@ export DB_HOSTNAME="${APP_NAME}.${NAMESPACE}.svc.cluster.local"
 export DB_DATABASE="edge-db"
 export DB_USERNAME="edge-db"
 export DB_PASSWORD="failureislame"
-
-APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
 ```
 
 ```
-# update openshift context to project
-oc project ${NAMESPACE} || oc new-project ${NAMESPACE}
-```
-
-```
-# setup prediction app
-oc new-app \
-  https://github.com/Enterprise-Neurosystem/edge-failure-prediction.git \
-  --name ${APP_NAME} \
-  -l ${APP_LABEL} \
-  -n ${NAMESPACE} \
-  --context-dir src
-
-# setup database parameters
-oc set env \
-  deployment/${APP_NAME} \
-  -e ${DB_HOSTNAME} \
-  -e ${DB_DATABASE} \
-  -e ${DB_USERNAME} \
-  -e ${DB_PASSWORD}
-
-# create route
-oc expose service \
-  ${APP_NAME} \
-  -n ${NAMESPACE} \
-  -l ${APP_LABEL} \
-  --overrides='{"spec":{"tls":{"termination":"edge"}}}'
 ```
 
 ## Local Quickstart

@@ -3,8 +3,8 @@ import psycopg2
 from psycopg2 import pool
 
 db_hostname = os.environ.get('DB_HOSTNAME', 'localhost')
-db_database = os.environ.get('DB_DATABASE', 'edge-db')
-db_username = os.environ.get('DB_USERNAME', 'edge-db')
+db_database = os.environ.get('DB_DATABASE', 'predict-db')
+db_username = os.environ.get('DB_USERNAME', 'predict-db')
 db_password = os.environ.get('DB_PASSWORD', 'failureislame')
 db_port = os.environ.get('DB_PORT', '5432')
 

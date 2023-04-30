@@ -1,22 +1,28 @@
 #!/bin/sh
 # set -x
 
+# setup database parameters
+DB_APP_NAME=${DB_APP_NAME:-predict-db}
+DB_DATABASE="${DB_DATABASE:-predict-db}"
+DB_USERNAME="${DB_USERNAME:-predict-db}"
+DB_PASSWORD="${DB_PASSWORD:-failureislame}"
+
 setup_container(){
-  docker stop edge-db
+  docker stop "${DB_APP_NAME}"
 
   docker run \
-    --name edge-db \
+    --name "${DB_APP_NAME}" \
     -d --rm \
     -p 5432:5432 \
     -v $(pwd):/opt/app-root/src \
-    -e POSTGRESQL_DATABASE=edge-db \
-    -e POSTGRESQL_PASSWORD=failure \
-    -e POSTGRESQL_USER=edge-db \
+    -e POSTGRESQL_DATABASE="${DB_DATABASE}" \
+    -e POSTGRESQL_PASSWORD="${DB_PASSWORD}" \
+    -e POSTGRESQL_USER="${DB_USERNAME}" \
     registry.redhat.io/rhel8/postgresql-12:latest
 
   docker exec \
     -it \
-    edge-db \
+    "${DB_APP_NAME}" \
     /bin/bash -c ". setup.sh; setup_db"
 }
 
@@ -26,5 +32,5 @@ setup_db(){
   cd /tmp
 
   unzip -o sensor.csv.zip
-  psql -d edge-db -f db.sql
+  psql -d "${DB_APP_NAME}" -f db.sql
 }

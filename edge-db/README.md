@@ -10,10 +10,6 @@ Note: The container will automatically be removed when it is stopped
 ./setup.sh
 ```
 
-```
-docker rm edge-db
-```
-
 ## Run postgres in OpenShift
 
 Setup new project for postgres DB in OpenShift
@@ -22,7 +18,7 @@ Note: Modify the (export) env vars below to fit your needs
 
 ```
 # setup parameters
-export APP_NAME=edge-db
+export APP_NAME=predict-db
 export NAMESPACE=edge-failure-prediction
 export SVC_NAME="${APP_NAME}.${NAMESPACE}.svc.cluster.local"
 
@@ -46,9 +42,9 @@ oc new-app \
 oc set env \
   deployment/${APP_NAME} \
   -n ${NAMESPACE} \
-  -e POSTGRESQL_DATABASE=edge-db \
+  -e POSTGRESQL_DATABASE=predict-db \
   -e POSTGRESQL_PASSWORD=failureislame \
-  -e POSTGRESQL_USER=edge-db
+  -e POSTGRESQL_USER=predict-db
 
 # make db persistent
 oc set volume \
@@ -83,6 +79,6 @@ Run commands in postgres container
 oc rsh deployment/${APP_NAME}
 
 # ex: interact with cli
-# psql -d edge-db
+# psql -d predict-db
 # SELECT * FROM waterpump ORDER BY timestamp;
 ```
