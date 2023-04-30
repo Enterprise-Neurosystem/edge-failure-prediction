@@ -37,7 +37,7 @@ def main():
 @app.route("/initData", methods=["POST"])
 def init_data():
     """
-    This is an asychronous call so that the page, main.html can load immediately while the data it displays is
+    This is an asynchronous call so that the page, main.html can load immediately while the data it displays is
     prepared and loaded in the background.
     Create a DataPreparation object which gets the data and loads its parts into class variables.
     :return: JSON that contains the HTML that contains the data to be displayed.
@@ -89,7 +89,7 @@ def progress_shape_data():
 @app.route("/train-model", methods=["GET", "POST"])
 def train_model():
     """
-    This is an asyncronous function that trains the model and generates the training graph stats.  The stats
+    This is an asynchronous function that trains the model and generates the training graph stats.  The stats
     are cached in the class variable DataPreparation.train_history
     :return: An <img> tag that contains the src path to a "Finished" message
     """

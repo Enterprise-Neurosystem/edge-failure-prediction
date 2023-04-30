@@ -5,7 +5,7 @@ import json
 
 
 class DataSourceManager:
-    """Used as a  data source that periodically yields timeseries data points
+    """Used as a  data source that periodically yields time series data points
     NOTE:  In the method, get_kafka_data() there are two options for getting a consumer.
             The default is already set.  If this code is to be run outside the cluster,
             comment out line 39 and uncomment line 37

@@ -159,10 +159,10 @@ class DataPreparation:
         return df[df["machine_status"] == 1].index
 
     """
-      - the data before and two hours past the first failure is used as validation dataset
-      - the data two hours after the first failure and two hours after the second failure is used as test dataset
-      - the data two hours after the second failure is used as training dataset
-      """
+    - the data before and two hours past the first failure is used as validation dataset
+    - the data two hours after the first failure and two hours after the second failure is used as test dataset
+    - the data two hours after the second failure is used as training dataset
+    """
 
     @staticmethod
     def separate_data(df, failure_times):
