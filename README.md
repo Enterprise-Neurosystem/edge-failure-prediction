@@ -68,6 +68,15 @@ pip install -r src/requirements.txt
 Run local web app
 
 ```
+# custom connection example
+export DB_HOSTNAME="waterpump.ci3tyclo8vsc.us-east-1.rds.amazonaws.com"
+export DB_DATABASE="postgres"
+export DB_USERNAME="postgres"
+export DB_PASSWORD="FR2s3rv2ll3y"
+export DB_PORT="5432"
+```
+
+```
 # reactivate your virtual env with the following
 . venv/bin/activate
 
