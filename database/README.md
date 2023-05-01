@@ -9,6 +9,8 @@ Note: The container will automatically be removed when it is stopped
 ```
 # NOTICE: run from repo root dir
 
+export DB_PORT=5400
+
 . scripts/bootstrap.sh
 container_setup_db
 ```

@@ -10,6 +10,7 @@ DB_HOSTNAME="${DB_HOSTNAME:-${DB_APP_NAME}.${NAMESPACE}.svc.cluster.local}"
 DB_DATABASE="${DB_DATABASE:-predict-db}"
 DB_USERNAME="${DB_USERNAME:-predict-db}"
 DB_PASSWORD="${DB_PASSWORD:-failureislame}"
+DB_PORT="${DB_PORT:-5432}"
 
 # setup kafka parameters
 KAFKA_HOSTNAME="${KAFKA_HOSTNAME:-kafka-cluster-kafka-bootstrap.edge-kafka.svc.cluster.local}"
@@ -167,7 +168,7 @@ container_setup_db_instance(){
   ${PODMAN_CMD} run \
     --name "${DB_APP_NAME}" \
     -d --rm \
-    -p 5432:5432 \
+    -p "${DB_PORT}":5432 \
     -v $(pwd):/opt/app-root/src \
     -e POSTGRESQL_DATABASE="${DB_DATABASE}" \
     -e POSTGRESQL_PASSWORD="${DB_PASSWORD}" \
