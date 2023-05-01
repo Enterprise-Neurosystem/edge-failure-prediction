@@ -19,8 +19,6 @@ GIT_BRANCH="workshop/updates"
 DB_PATH=database
 APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
 
-PODMAN_CMD=docker
-which podman && PODMAN_CMD=podman
 
 ocp_init(){
 oc whoami || exit 0
@@ -156,11 +154,16 @@ oc annotate route \
 }
 
 container_setup_db_instance(){
+  PODMAN_CMD=docker
+  which podman && PODMAN_CMD=podman
+
   # remove old container
   ${PODMAN_CMD} stop "${DB_APP_NAME}"
   sleep 1
 
   # run db; remove on stop
+  # requires login
+  # registry.redhat.io/rhel8/postgresql-12:latest
   ${PODMAN_CMD} run \
     --name "${DB_APP_NAME}" \
     -d --rm \
@@ -169,8 +172,8 @@ container_setup_db_instance(){
     -e POSTGRESQL_DATABASE="${DB_DATABASE}" \
     -e POSTGRESQL_PASSWORD="${DB_PASSWORD}" \
     -e POSTGRESQL_USER="${DB_USERNAME}" \
-    registry.redhat.io/rhel8/postgresql-12:latest
-
+    quay.io/sclorg/postgresql-12-c8s:latest
+    
   # run db data setup
   ${PODMAN_CMD} exec \
     -it \

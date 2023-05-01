@@ -64,3 +64,6 @@ COPY waterpump
 ALTER TABLE waterpump
     DROP COLUMN id ;
 
+ALTER TABLE waterpump
+    DROP COLUMN sensor_15 ;
+
