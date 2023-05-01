@@ -1,0 +1,3 @@
+-r src/requirements.txt
+-r notebooks/requirements.txt
+black[jupyter]
