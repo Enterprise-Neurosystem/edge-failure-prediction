@@ -65,15 +65,17 @@ oc set volume \
 }
 
 ocp_setup_db_data(){
-POD=$(oc get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
+oc rollout status deployment "${DB_APP_NAME}"  -n "${ARGO_NS}" >/dev/null 2>&1
 
-oc wait \
-  pod/${POD} \
-  -n ${NAMESPACE} \
-  --for=condition=Ready
+until oc -n "${NAMESPACE}" exec deployment/"${DB_APP_NAME}" -- psql --version >/dev/null 2>&1
+do
+  POD=$(oc get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
+  sleep 1
+done
 
 echo "copying data to database container..."
 echo "POD: ${POD}"
+
 oc -n "${NAMESPACE}" cp "${DB_PATH}"/db.sql "${POD}":/tmp
 oc -n "${NAMESPACE}" cp "${DB_PATH}"/sensor.csv.zip "${POD}":/tmp
 
