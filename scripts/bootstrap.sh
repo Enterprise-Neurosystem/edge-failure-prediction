@@ -17,7 +17,7 @@ KAFKA_HOSTNAME="${KAFKA_HOSTNAME:-kafka-cluster-kafka-bootstrap.edge-kafka.svc.c
 
 # other parameters
 GIT_BRANCH="workshop/updates"
-DB_PATH=database
+DB_PATH=data
 APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
 
 
