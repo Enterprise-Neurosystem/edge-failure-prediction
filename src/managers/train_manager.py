@@ -37,10 +37,14 @@ class TrainManager:
             return lr * (0.1)
 
     def fit_model(self, X, y, epochs=10, batch_size=64):
-        print("TrainManager.fit_model()")
+        # Must reshape labels, y to match 3-d shape of output
+        reshaped_labels = tf.expand_dims(tf.expand_dims(DataPreparation.y_train, axis=1), axis=1)
+        print("y_train original shape: {} y_train reshaped: {}".format(y,
+            tf.expand_dims(tf.expand_dims(y, axis=1), axis=1).shape))
+
         # TODO:  make callbacks configurable
         callback = LearningRateScheduler(TrainManager.scheduler)
-        history = TrainManager.model.fit(X, y, epochs, batch_size, callbacks=[callback])
+        history = TrainManager.model.fit(X, reshaped_labels, epochs, batch_size, callbacks=[callback])
         TrainManager.model.save("static/cache/trained_model")
         # joblib.dump(TrainManager.model, 'static/cache/trained_model')
 
