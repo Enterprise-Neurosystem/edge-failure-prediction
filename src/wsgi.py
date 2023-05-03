@@ -107,8 +107,7 @@ def train_model():
     )
     # Get history of the training
     DataPreparation.train_history = train_manager.fit_model(
-        DataPreparation.X_train, DataPreparation.y_train, epochs, batch_size
-    )
+        DataPreparation.X_train, DataPreparation.y_train, epochs, batch_size)
     return "<img src='static/TrainFinished.png'/>"
 
 
