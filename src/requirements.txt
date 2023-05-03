@@ -1,9 +1,9 @@
 # https://developer.apple.com/metal/tensorflow-plugin/
-keras~=2.12.0
+keras~=2.9
 psycopg2-binary~=2.9.3
 tensorflow~=2.12.0; sys_platform != 'darwin'
-tensorflow-macos~=2.12.0; sys_platform == 'darwin'
-tensorflow-metal; sys_platform == 'darwin'
+tensorflow-macos~=2.9.0; sys_platform == 'darwin'
+tensorflow-metal==0.5.0; sys_platform == 'darwin'
 numpy~=1.22
 Flask~=2.0.1
 pandas~=1.4.1
