@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# insert secret code sause for OS based depends
-
-${STI_SCRIPTS_PATH}/assemble
