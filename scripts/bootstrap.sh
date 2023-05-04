@@ -69,9 +69,10 @@ oc rollout status deployment "${DB_APP_NAME}"  -n "${ARGO_NS}" >/dev/null 2>&1
 
 until oc -n "${NAMESPACE}" exec deployment/"${DB_APP_NAME}" -- psql --version >/dev/null 2>&1
 do
-  POD=$(oc get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
   sleep 1
 done
+
+POD=$(oc -n "${NAMESPACE}" get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
 
 echo "copying data to database container..."
 echo "POD: ${POD}"
