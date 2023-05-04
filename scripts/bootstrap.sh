@@ -19,6 +19,7 @@ KAFKA_HOSTNAME="${KAFKA_HOSTNAME:-kafka-cluster-kafka-bootstrap.edge-kafka.svc.c
 GIT_BRANCH="main"
 DB_PATH=data
 APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
+CONTEXT_DIR="src"
 
 
 ocp_init(){
@@ -126,7 +127,7 @@ oc new-app \
   --name ${APP_NAME} \
   -l ${APP_LABEL} \
   -n ${NAMESPACE} \
-  --context-dir src
+  --context-dir ${CONTEXT_DIR}
 
 # setup database parameters
 oc set env \
