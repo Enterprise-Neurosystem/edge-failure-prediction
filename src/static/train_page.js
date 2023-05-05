@@ -2,7 +2,8 @@
 // Once model has been trained, display the loss graph.
 function trainGraph(){
     //console.log("trainGraph()");
-    makeGraphBtnObj.disabled = "true";
+    makeGraphBtnObj.disabled = true;
+    trainBtnObj.disabled = false;
     let url = '/display-train-graph';
     let formObj = document.getElementById("trainForm")
     let formData = new FormData(formObj);
@@ -28,6 +29,7 @@ function displayTrainGraphHTML(serializedImage){
 }
 // Train model
 function trainModel(){
+    trainBtnObj.disabled = true;
     let url = '/train-model';
     graphDivObj.innerHTML = "<img src='static/TrainMsg.png'/>";
     let formObj = document.getElementById("trainForm")
