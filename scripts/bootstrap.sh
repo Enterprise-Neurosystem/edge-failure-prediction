@@ -103,6 +103,8 @@ echo "DB_HOSTNAME: ${DB_HOSTNAME}"
 }
 
 ocp_setup_db(){
+[ -n "${NON_INTERACTIVE}" ] && input=yes
+
 echo "If you are participating in a workshop, the safe answer is: No"
 read -r -p "Setup sensor database in OpenShift? [y/N] " input
 case $input in
