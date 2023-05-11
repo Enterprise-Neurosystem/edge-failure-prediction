@@ -152,6 +152,13 @@ oc expose service \
   -l ${APP_LABEL} \
   --overrides='{"spec":{"tls":{"termination":"edge"}}}'
 
+# kludge - some versions of oc don't work
+oc patch route \
+  ${APP_NAME} \
+  -n ${NAMESPACE} \
+  --type=merge \
+  -p '{"spec":{"tls":{"termination":"edge"}}}'
+
 # kludge - fix timeout for app
 oc annotate route \
   ${APP_NAME} \
