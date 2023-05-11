@@ -23,9 +23,14 @@ CONTEXT_DIR="src"
 
 
 ocp_init(){
-oc whoami || exit 0
-# update openshift context to project
-oc project ${NAMESPACE} || oc new-project ${NAMESPACE}
+  oc whoami || exit 0
+
+  echo "NAMESPACE: ${NAMESPACE}"
+  echo "Press Ctrl + C if this is not correct"
+  sleep 5
+
+  # update openshift context to project
+  oc project ${NAMESPACE} || oc new-project ${NAMESPACE}
 }
 
 is_sourced() {
@@ -38,48 +43,48 @@ is_sourced() {
 }
 
 ocp_setup_db_instance(){
-# setup postgres
-oc new-app \
-  --name ${DB_APP_NAME} \
-  -n ${NAMESPACE} \
-  -l ${APP_LABEL} \
-  --image-stream=postgresql:12-el8
+  # setup postgres
+  oc new-app \
+    --name ${DB_APP_NAME} \
+    -n ${NAMESPACE} \
+    -l ${APP_LABEL} \
+    --image-stream=postgresql:12-el8
 
-# setup postgres env
-oc set env \
-  deployment/${DB_APP_NAME} \
-  -n ${NAMESPACE} \
-  -e POSTGRESQL_DATABASE=${DB_DATABASE} \
-  -e POSTGRESQL_USER=${DB_USERNAME} \
-  -e POSTGRESQL_PASSWORD=${DB_PASSWORD}
+  # setup postgres env
+  oc set env \
+    deployment/${DB_APP_NAME} \
+    -n ${NAMESPACE} \
+    -e POSTGRESQL_DATABASE=${DB_DATABASE} \
+    -e POSTGRESQL_USER=${DB_USERNAME} \
+    -e POSTGRESQL_PASSWORD=${DB_PASSWORD}
 
-# make db persistent
-oc set volume \
-  deployment/${DB_APP_NAME} \
-  --add \
-  --name=${DB_APP_NAME} \
-  --mount-path=/var/lib/postgresql/data \
-  -t pvc \
-  --claim-size=1G \
-  --claim-name=${DB_APP_NAME} \
-  --overwrite
+  # make db persistent
+  oc set volume \
+    deployment/${DB_APP_NAME} \
+    --add \
+    --name=${DB_APP_NAME} \
+    --mount-path=/var/lib/postgresql/data \
+    -t pvc \
+    --claim-size=1G \
+    --claim-name=${DB_APP_NAME} \
+    --overwrite
 }
 
 ocp_setup_db_data(){
-oc rollout status deployment "${DB_APP_NAME}"  -n "${ARGO_NS}" >/dev/null 2>&1
+  oc rollout status deployment "${DB_APP_NAME}"  -n "${ARGO_NS}" >/dev/null 2>&1
 
-until oc -n "${NAMESPACE}" exec deployment/"${DB_APP_NAME}" -- psql --version >/dev/null 2>&1
-do
-  sleep 1
-done
+  until oc -n "${NAMESPACE}" exec deployment/"${DB_APP_NAME}" -- psql --version >/dev/null 2>&1
+  do
+    sleep 1
+  done
 
-POD=$(oc -n "${NAMESPACE}" get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
+  POD=$(oc -n "${NAMESPACE}" get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
 
-echo "copying data to database container..."
-echo "POD: ${POD}"
+  echo "copying data to database container..."
+  echo "POD: ${POD}"
 
-oc -n "${NAMESPACE}" cp "${DB_PATH}"/db.sql "${POD}":/tmp
-oc -n "${NAMESPACE}" cp "${DB_PATH}"/sensor.csv.zip "${POD}":/tmp
+  oc -n "${NAMESPACE}" cp "${DB_PATH}"/db.sql "${POD}":/tmp
+  oc -n "${NAMESPACE}" cp "${DB_PATH}"/sensor.csv.zip "${POD}":/tmp
 
 cat << COMMAND | oc -n "${NAMESPACE}" exec "${POD}" -- sh -c "$(cat -)"
 # you can run the following w/ oc rsh
@@ -96,75 +101,75 @@ COMMAND
 }
 
 ocp_print_db_info(){
-# print db hostname for workshop
-echo "The web app requires a running postgres db to function"
-echo "The following is the hostame is for the database inside OpenShift"
-echo "DB_HOSTNAME: ${DB_HOSTNAME}"
+  # print db hostname for workshop
+  echo "The web app requires a running postgres db to function"
+  echo "The following is the hostame is for the database inside OpenShift"
+  echo "DB_HOSTNAME: ${DB_HOSTNAME}"
 }
 
 ocp_setup_db(){
-[ -n "${NON_INTERACTIVE}" ] && input=yes
+  [ -n "${NON_INTERACTIVE}" ] && input=yes
 
-echo "If you are participating in a workshop, the safe answer is: No"
-read -r -p "Setup sensor database in OpenShift? [y/N] " input
-case $input in
-  [yY][eE][sS]|[yY])
-    ocp_setup_db_instance
-    ocp_setup_db_data
-    ocp_print_db_info
-    ;;
-  [nN][oO]|[nN])
-    echo
-    ;;
-  *)
-    echo
-    ;;
-esac
+  echo "If you are participating in a workshop, the safe answer is: No"
+  read -r -p "Setup sensor database in OpenShift? [y/N] " input
+  case $input in
+    [yY][eE][sS]|[yY])
+      ocp_setup_db_instance
+      ocp_setup_db_data
+      ocp_print_db_info
+      ;;
+    [nN][oO]|[nN])
+      echo
+      ;;
+    *)
+      echo
+      ;;
+  esac
 }
 
 ocp_setup_app(){
-# setup prediction app
-oc new-app \
-  https://github.com/Enterprise-Neurosystem/edge-failure-prediction.git#${GIT_BRANCH} \
-  --name ${APP_NAME} \
-  -l ${APP_LABEL} \
-  -n ${NAMESPACE} \
-  --context-dir ${CONTEXT_DIR}
+  # setup prediction app
+  oc new-app \
+    https://github.com/Enterprise-Neurosystem/edge-failure-prediction.git#${GIT_BRANCH} \
+    --name ${APP_NAME} \
+    -l ${APP_LABEL} \
+    -n ${NAMESPACE} \
+    --context-dir ${CONTEXT_DIR}
 
-# setup database parameters
-oc set env \
-  deployment/${APP_NAME} \
-  -n ${NAMESPACE} \
-  -e DB_HOSTNAME=${DB_HOSTNAME} \
-  -e DB_DATABASE=${DB_DATABASE} \
-  -e DB_USERNAME=${DB_USERNAME} \
-  -e DB_PASSWORD=${DB_PASSWORD}
+  # setup database parameters
+  oc set env \
+    deployment/${APP_NAME} \
+    -n ${NAMESPACE} \
+    -e DB_HOSTNAME=${DB_HOSTNAME} \
+    -e DB_DATABASE=${DB_DATABASE} \
+    -e DB_USERNAME=${DB_USERNAME} \
+    -e DB_PASSWORD=${DB_PASSWORD}
 
-oc set env \
-  deployment/${APP_NAME} \
-  -n ${NAMESPACE} \
-  -e KAFKA_HOSTNAME=${KAFKA_HOSTNAME}
+  oc set env \
+    deployment/${APP_NAME} \
+    -n ${NAMESPACE} \
+    -e KAFKA_HOSTNAME=${KAFKA_HOSTNAME}
 
-# create route
-oc expose service \
-  ${APP_NAME} \
-  -n ${NAMESPACE} \
-  -l ${APP_LABEL} \
-  --overrides='{"spec":{"tls":{"termination":"edge"}}}'
+  # create route
+  oc expose service \
+    ${APP_NAME} \
+    -n ${NAMESPACE} \
+    -l ${APP_LABEL} \
+    --overrides='{"spec":{"tls":{"termination":"edge","insecureEdgeTerminationPolicy":"Redirect"}}}'
 
-# kludge - some versions of oc don't work
-oc patch route \
-  ${APP_NAME} \
-  -n ${NAMESPACE} \
-  --type=merge \
-  -p '{"spec":{"tls":{"termination":"edge"}}}'
+  # kludge - some versions of oc don't work
+  oc patch route \
+    ${APP_NAME} \
+    -n ${NAMESPACE} \
+    --type=merge \
+    -p '{"spec":{"tls":{"termination":"edge","insecureEdgeTerminationPolicy":"Redirect"}}}'
 
-# kludge - fix timeout for app
-oc annotate route \
-  ${APP_NAME} \
-  -n ${NAMESPACE} \
-  haproxy.router.openshift.io/timeout=5m \
-  --overwrite
+  # kludge - fix timeout for app
+  oc annotate route \
+    ${APP_NAME} \
+    -n ${NAMESPACE} \
+    haproxy.router.openshift.io/timeout=5m \
+    --overwrite
 }
 
 container_setup_db_instance(){
@@ -196,20 +201,20 @@ container_setup_db_instance(){
 }
 
 container_setup_db_data(){
-cd database
+  cd database
 
-cp sensor.csv.zip db.sql /tmp
+  cp sensor.csv.zip db.sql /tmp
 
-cd /tmp
+  cd /tmp
 
-unzip -o sensor.csv.zip
+  unzip -o sensor.csv.zip
 
-echo 'GRANT ALL ON TABLE waterpump TO "'"${DB_USERNAME}"'" ;' >> db.sql
-psql -d "${DB_APP_NAME}" -f db.sql
+  echo 'GRANT ALL ON TABLE waterpump TO "'"${DB_USERNAME}"'" ;' >> db.sql
+  psql -d "${DB_APP_NAME}" -f db.sql
 }
 
 container_setup_db(){
-container_setup_db_instance
+  container_setup_db_instance
 
 echo "To stop the container and clean up run:
   podman rm predict-db
@@ -217,9 +222,9 @@ echo "To stop the container and clean up run:
 }
 
 main(){
-ocp_init
-ocp_setup_db
-ocp_setup_app
+  ocp_init
+  ocp_setup_db
+  ocp_setup_app
 }
 
 is_sourced || main
