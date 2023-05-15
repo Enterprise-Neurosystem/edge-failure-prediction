@@ -198,7 +198,7 @@ class DataPreparation:
         :type: MinMaxScaler
         """
         sensor_names = training_df.columns[:-2]
-        min_max_scaler = MinMaxScaler(feature_range=(0, 1))
+        min_max_scaler = MinMaxScaler(feature_range=(0, 0.5))
         scaler = min_max_scaler.fit(training_df[sensor_names])
 
         return scaler
