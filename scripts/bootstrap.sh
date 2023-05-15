@@ -95,7 +95,7 @@ cd /tmp
 unzip -o sensor.csv.zip
 
 echo 'GRANT ALL ON TABLE waterpump TO "'"${DB_USERNAME}"'" ;' >> db.sql
-psql -d $DB_DATABASE -f db.sql
+psql -d ${DB_DATABASE} -f db.sql
 
 COMMAND
 }
@@ -210,7 +210,7 @@ container_setup_db_data(){
   unzip -o sensor.csv.zip
 
   echo 'GRANT ALL ON TABLE waterpump TO "'"${DB_USERNAME}"'" ;' >> db.sql
-  psql -d "${DB_APP_NAME}" -f db.sql
+  psql -d "${DB_DATABASE}" -f db.sql
 }
 
 container_setup_db(){
