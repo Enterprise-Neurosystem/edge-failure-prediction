@@ -110,8 +110,11 @@ ocp_print_db_info(){
 ocp_setup_db(){
   [ -n "${NON_INTERACTIVE}" ] && input=yes
 
-  echo "If you are participating in a workshop, the safe answer is: No"
-  read -r -p "Setup sensor database in OpenShift? [y/N] " input
+  if [ ! -n "$input" ]; then 
+    echo "As a participant in a workshop, the expected answer is: No"
+    read -r -p "Setup sensor database in OpenShift? [y/N] " input
+  fi
+  
   case $input in
     [yY][eE][sS]|[yY])
       ocp_setup_db_instance
