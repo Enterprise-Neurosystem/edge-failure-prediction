@@ -71,11 +71,10 @@ ocp_setup_db_instance(){
 }
 
 ocp_setup_db_data(){
-  oc -n "${NAMESPACE}" rollout status deployment "${DB_APP_NAME}" >/dev/null 2>&1
 
   until oc -n "${NAMESPACE}" exec deployment/"${DB_APP_NAME}" -- psql --version >/dev/null 2>&1
   do
-    sleep 1
+    sleep 2
   done
 
   POD=$(oc -n "${NAMESPACE}" get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
