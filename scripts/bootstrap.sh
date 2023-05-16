@@ -11,6 +11,8 @@ DB_DATABASE="${DB_DATABASE:-predict-db}"
 DB_USERNAME="${DB_USERNAME:-predict-db}"
 DB_PASSWORD="${DB_PASSWORD:-failureislame}"
 DB_PORT="${DB_PORT:-5432}"
+DB_DATA_PATH="${DB_DATA_PATH:-/var/lib/pgsql/data}"
+DB_TABLE="${DB_TABLE:-waterpump}"
 
 # setup kafka parameters
 KAFKA_HOSTNAME="${KAFKA_HOSTNAME:-kafka-cluster-kafka-bootstrap.edge-kafka.svc.cluster.local}"
@@ -63,7 +65,7 @@ ocp_setup_db_instance(){
     deployment/${DB_APP_NAME} \
     --add \
     --name=${DB_APP_NAME} \
-    --mount-path=/var/lib/postgresql/data \
+    --mount-path=${DB_DATA_PATH} \
     -t pvc \
     --claim-size=1G \
     --claim-name=${DB_APP_NAME} \
@@ -71,10 +73,12 @@ ocp_setup_db_instance(){
 }
 
 ocp_setup_db_data(){
+  # SQL_EXISTS=$(printf '\dt "%s"' "${DB_TABLE}")
+  # psql -d "${DB_DATABASE}" -c "${SQL_EXISTS}"
 
   until oc -n "${NAMESPACE}" exec deployment/"${DB_APP_NAME}" -- psql --version >/dev/null 2>&1
   do
-    sleep 2
+    sleep 10
   done
 
   POD=$(oc -n "${NAMESPACE}" get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
