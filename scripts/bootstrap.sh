@@ -202,7 +202,7 @@ container_setup_db_instance(){
 }
 
 container_setup_db_data(){
-  cd database
+  cd data
 
   cp sensor.csv.zip db.sql /tmp
 
