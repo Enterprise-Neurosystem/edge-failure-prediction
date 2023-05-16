@@ -71,7 +71,7 @@ ocp_setup_db_instance(){
 }
 
 ocp_setup_db_data(){
-  oc rollout status deployment "${DB_APP_NAME}"  -n "${ARGO_NS}" >/dev/null 2>&1
+  oc -n "${NAMESPACE}" rollout status deployment "${DB_APP_NAME}" >/dev/null 2>&1
 
   until oc -n "${NAMESPACE}" exec deployment/"${DB_APP_NAME}" -- psql --version >/dev/null 2>&1
   do
@@ -91,7 +91,6 @@ cat << COMMAND | oc -n "${NAMESPACE}" exec "${POD}" -- sh -c "$(cat -)"
 # this hack just saves you time
 
 cd /tmp
-# curl url.zip > sensor.csv.zip
 unzip -o sensor.csv.zip
 
 echo 'GRANT ALL ON TABLE waterpump TO "'"${DB_USERNAME}"'" ;' >> db.sql
