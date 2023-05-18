@@ -11,6 +11,8 @@ DB_DATABASE="${DB_DATABASE:-predict-db}"
 DB_USERNAME="${DB_USERNAME:-predict-db}"
 DB_PASSWORD="${DB_PASSWORD:-failureislame}"
 DB_PORT="${DB_PORT:-5432}"
+DB_DATA_PATH="${DB_DATA_PATH:-/var/lib/pgsql/data}"
+DB_TABLE="${DB_TABLE:-waterpump}"
 
 # setup kafka parameters
 KAFKA_HOSTNAME="${KAFKA_HOSTNAME:-kafka-cluster-kafka-bootstrap.edge-kafka.svc.cluster.local}"
@@ -63,7 +65,7 @@ ocp_setup_db_instance(){
     deployment/${DB_APP_NAME} \
     --add \
     --name=${DB_APP_NAME} \
-    --mount-path=/var/lib/postgresql/data \
+    --mount-path=${DB_DATA_PATH} \
     -t pvc \
     --claim-size=1G \
     --claim-name=${DB_APP_NAME} \
@@ -71,11 +73,12 @@ ocp_setup_db_instance(){
 }
 
 ocp_setup_db_data(){
-  oc rollout status deployment "${DB_APP_NAME}"  -n "${ARGO_NS}" >/dev/null 2>&1
+  # SQL_EXISTS=$(printf '\dt "%s"' "${DB_TABLE}")
+  # psql -d "${DB_DATABASE}" -c "${SQL_EXISTS}"
 
   until oc -n "${NAMESPACE}" exec deployment/"${DB_APP_NAME}" -- psql --version >/dev/null 2>&1
   do
-    sleep 1
+    sleep 10
   done
 
   POD=$(oc -n "${NAMESPACE}" get pod -l deployment="${DB_APP_NAME}" -o name | sed 's#pod/##')
@@ -91,11 +94,10 @@ cat << COMMAND | oc -n "${NAMESPACE}" exec "${POD}" -- sh -c "$(cat -)"
 # this hack just saves you time
 
 cd /tmp
-# curl url.zip > sensor.csv.zip
 unzip -o sensor.csv.zip
 
 echo 'GRANT ALL ON TABLE waterpump TO "'"${DB_USERNAME}"'" ;' >> db.sql
-psql -d $DB_DATABASE -f db.sql
+psql -d ${DB_DATABASE} -f db.sql
 
 COMMAND
 }
@@ -110,8 +112,11 @@ ocp_print_db_info(){
 ocp_setup_db(){
   [ -n "${NON_INTERACTIVE}" ] && input=yes
 
-  echo "If you are participating in a workshop, the safe answer is: No"
-  read -r -p "Setup sensor database in OpenShift? [y/N] " input
+  if [ ! -n "$input" ]; then 
+    echo "As a participant in a workshop, the expected answer is: No"
+    read -r -p "Setup sensor database in OpenShift? [y/N] " input
+  fi
+  
   case $input in
     [yY][eE][sS]|[yY])
       ocp_setup_db_instance
@@ -201,7 +206,7 @@ container_setup_db_instance(){
 }
 
 container_setup_db_data(){
-  cd database
+  cd data
 
   cp sensor.csv.zip db.sql /tmp
 
@@ -210,7 +215,7 @@ container_setup_db_data(){
   unzip -o sensor.csv.zip
 
   echo 'GRANT ALL ON TABLE waterpump TO "'"${DB_USERNAME}"'" ;' >> db.sql
-  psql -d "${DB_APP_NAME}" -f db.sql
+  psql -d "${DB_DATABASE}" -f db.sql
 }
 
 container_setup_db(){
