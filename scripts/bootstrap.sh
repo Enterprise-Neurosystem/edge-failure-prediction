@@ -18,6 +18,7 @@ DB_TABLE="${DB_TABLE:-waterpump}"
 KAFKA_HOSTNAME="${KAFKA_HOSTNAME:-kafka-cluster-kafka-bootstrap.edge-kafka.svc.cluster.local}"
 
 # other parameters
+GIT_URL=https://github.com/Enterprise-Neurosystem/edge-failure-modcation.git
 GIT_BRANCH="main"
 DB_PATH=data
 APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
@@ -135,7 +136,7 @@ ocp_setup_db(){
 ocp_setup_app(){
   # setup prediction app
   oc new-app \
-    https://github.com/Enterprise-Neurosystem/edge-failure-prediction.git#${GIT_BRANCH} \
+    ${GIT_URL}#${GIT_BRANCH} \
     --name ${APP_NAME} \
     -l ${APP_LABEL} \
     -n ${NAMESPACE} \
@@ -197,7 +198,10 @@ container_setup_db_instance(){
     -e POSTGRESQL_PASSWORD="${DB_PASSWORD}" \
     -e POSTGRESQL_USER="${DB_USERNAME}" \
     quay.io/sclorg/postgresql-12-c8s:latest
-    
+  
+  # wait for container to start
+  sleep 10
+
   # run db data setup
   ${PODMAN_CMD} exec \
     -it \
@@ -206,7 +210,7 @@ container_setup_db_instance(){
 }
 
 container_setup_db_data(){
-  cd data
+  cd ${DB_PATH}
 
   cp sensor.csv.zip db.sql /tmp
 
