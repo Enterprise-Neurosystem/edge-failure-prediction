@@ -18,7 +18,7 @@ DB_TABLE="${DB_TABLE:-waterpump}"
 KAFKA_HOSTNAME="${KAFKA_HOSTNAME:-kafka-cluster-kafka-bootstrap.edge-kafka.svc.cluster.local}"
 
 # other parameters
-GIT_URL=https://github.com/Enterprise-Neurosystem/edge-failure-modcation.git
+GIT_URL=https://github.com/Enterprise-Neurosystem/edge-failure-prediction.git
 GIT_BRANCH="main"
 DB_PATH=data
 APP_LABEL="app.kubernetes.io/part-of=${APP_NAME}"
