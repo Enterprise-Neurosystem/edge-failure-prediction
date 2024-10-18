@@ -11,6 +11,7 @@ matplotlib~=3.5.1
 plotly~=5.5.0
 joblib~=1.1.0
 scikit-learn~=1.0.2
+Werkzeug==2.2.2
 # gunicorn
 
 pip~=22.1.2
