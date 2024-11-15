@@ -140,7 +140,7 @@ ocp_setup_app(){
     --name ${APP_NAME} \
     -l ${APP_LABEL} \
     -n ${NAMESPACE} \
-    --image-stream=python:3.8-ubi8
+    --image-stream=python:3.8-ubi8 \
     --context-dir ${CONTEXT_DIR}
 
   # setup database parameters
@@ -182,6 +182,7 @@ ocp_setup_app(){
 container_setup_db_instance(){
   PODMAN_CMD=docker
   which podman && PODMAN_CMD=podman
+  which getenforce && SELINUX=":z"
 
   # remove old container
   ${PODMAN_CMD} stop "${DB_APP_NAME}"
@@ -194,7 +195,7 @@ container_setup_db_instance(){
     --name "${DB_APP_NAME}" \
     -d --rm \
     -p "${DB_PORT}":5432 \
-    -v $(pwd):/opt/app-root/src \
+    -v "$(pwd):/opt/app-root/src${SELINUX}" \
     -e POSTGRESQL_DATABASE="${DB_DATABASE}" \
     -e POSTGRESQL_PASSWORD="${DB_PASSWORD}" \
     -e POSTGRESQL_USER="${DB_USERNAME}" \
