@@ -4,7 +4,5 @@ kind: Component
 namespace: edge-kafka
 
 resources:
-  - edit-rolebinding.yaml
-  - kafka-cluster-route.yaml
-  - kafka-cluster-config.yaml
+  - kafka-cluster.yaml
   - namespace.yaml
