@@ -16,7 +16,7 @@ Last tested with:
 - Shell: bash
 - OS: mac,linux (various)
 - Podman 4.4.4
-- DBever 23.*
+- DBeaver 23.*
 
 ## Workshop
 
@@ -28,16 +28,16 @@ You can view the default parameters for `bootstrap.sh` [here](scripts/bootstrap.
 
 For more info about interacting with the database in OpenShift look [here](database/README.md)
 
-```
+```sh
 # workshop user parameters
-# note: run this if you are a workshop user before bootstrap.sh
+# note: run this ONLY if you are a WORKSHOP USER before bootstrap.sh
 
 export NAMESPACE=$(oc whoami)
 export DB_HOSTNAME="predict-db.edge-failure-prediction.svc.cluster.local"
 export KAFKA_HOSTNAME="kafka-cluster-kafka-bootstrap.edge-kafka.svc.cluster.local"
 ```
 
-```
+```sh
 scripts/bootstrap.sh
 ```
 
@@ -45,7 +45,7 @@ scripts/bootstrap.sh
 
 Setup local postgres container
 
-```
+```sh
 . scripts/bootstrap.sh
 container_setup_db
 ```
@@ -56,7 +56,7 @@ Note: Python version 3.9+ may fail. replace `python3` with `python3.8` if needed
 
 The following section only needs to be **run once**
 
-```
+```sh
 python3 -m venv venv
 
 # activate your virtual env with the following
@@ -67,7 +67,7 @@ pip install -r src/requirements.txt
 
 Run local web app
 
-```
+```sh
 # custom connection example
 export DB_HOSTNAME="waterpump.ci3tyclo8vsc.us-east-1.rds.amazonaws.com"
 export DB_DATABASE="postgres"
@@ -76,7 +76,7 @@ export DB_PASSWORD="FR2s3rv2ll3y"
 export DB_PORT="5432"
 ```
 
-```
+```sh
 # reactivate your virtual env with the following
 . venv/bin/activate
 
@@ -87,7 +87,7 @@ python3 wsgi.py
 
 Run local Jupyter Notebook
 
-```
+```sh
 pip install -r notebooks/requirements.txt
 jupyter-lab
 ```
@@ -108,9 +108,3 @@ The ML model used in this application needs improvement, particularly in the pre
 1. Cameron Garrison
 1. Cory Latschkowski
 1. Eli Guidera
-
-## Meeting Information
-
-Meetings are held every Thursday, 9-10 MST
-
-Contact Eli Guidera (guiderae@yahoo.com) for questions/comments/contributions.
