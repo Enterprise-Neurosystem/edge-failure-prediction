@@ -140,7 +140,7 @@ ocp_setup_app(){
     --name ${APP_NAME} \
     -l ${APP_LABEL} \
     -n ${NAMESPACE} \
-    --image-stream=python:3.9-ubi8 \
+    --image-stream=python:3.8-ubi8 \
     --context-dir ${CONTEXT_DIR}
 
   # setup database parameters
