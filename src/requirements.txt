@@ -13,12 +13,12 @@ joblib~=1.1.0
 scikit-learn~=1.0.2
 # gunicorn
 
-pip~=22.1.2
+# pip~=22.1.2
 attrs~=22.1.0
 zipp~=3.7.0
 toml~=0.10.2
-wheel~=0.37.1
 Pillow~=9.0.1
 Jinja2~=3.0.1
-setuptools~=63.1.0
+# setuptools~=63.1.0
 kafka-python~=2.0.2
+werkzeug==2.*
