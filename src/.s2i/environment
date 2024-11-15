@@ -10,6 +10,9 @@
 # TODO: fix gunicorn to not ERR_INCOMPLETE_CHUNKED_ENCODING
 APP_FILE=wsgi.py
 
+# upgrade pip
+UPGRADE_PIP_TO_LATEST=true
+
 # add proxy config via s2i scripts (no secrets)
 
 #http_proxy=http://proxy.example.com:8080
