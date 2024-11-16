@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+namespace: edge-kafka
+
+components:
+  - ../kafdrop
+  - ../kafka-instance
+
+resources:
+  - namespace.yaml
