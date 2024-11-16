@@ -179,6 +179,10 @@ ocp_setup_app(){
     --overwrite
 }
 
+ocp_setup_kafka(){
+  until oc apply -k gitops/kafka ; do : ; done
+}
+
 container_setup_db_instance(){
   PODMAN_CMD=docker
   which podman && PODMAN_CMD=podman
@@ -236,6 +240,7 @@ main(){
   ocp_init
   ocp_setup_db
   ocp_setup_app
+  ocp_setup_kafka
 }
 
 is_sourced || main
