@@ -14,3 +14,4 @@ run_default(){
 }
 
 run_default
+run_null
